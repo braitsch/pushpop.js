@@ -1,0 +1,31 @@
+
+.modal.fade.image-uploader
+	.modal-dialog
+		.modal-content
+			.modal-header
+				button.close(type='button', data-dismiss='modal', aria-label='Close')
+					span(aria-hidden='true') ×
+				h4.modal-title New Asset
+			.modal-body
+				.well
+					.media-preview
+						.thumb-generator
+						img
+						iframe(frameborder='0', webkitAllowFullScreen, mozallowfullscreen, allowFullScreen)
+			.modal-footer
+				#caption.form-inline
+					.form-group
+						label.form-control Caption
+						input.form-control
+				select.media-dropdown.form-control
+					option Image
+					option Video
+				#image
+					form(method="post" enctype="multipart/form-data")
+						input(disabled).media-input.form-control
+						input(type='file', accept='.png, .jpg, .jpeg' name="file-dialog" style='display:none;').file-dialog
+						button(type="button").btn.btn-success.btn-select Select
+						button(type="submit").btn.btn-primary.btn-upload Upload
+				#video
+					input.media-input.form-control
+					button(type="button").btn.btn-success.btn-save-video Save
