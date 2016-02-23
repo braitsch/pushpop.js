@@ -16,118 +16,6 @@ button .glyphicon {
 /*textarea {
 	resize: none;
 }*/
-#login {
-  height: 100vh; }
-  #login h6 {
-    margin-bottom: 20px; }
-  #login label {
-    color: #808080;
-    font-size: 13px;
-    font-weight: normal;
-    line-height: 18px;
-    margin-left: 2px;
-    text-shadow: -1px 1px 0 #fff; }
-  #login form {
-    width: 320px;
-    margin: auto;
-    position: relative;
-    top: 45%;
-    -webkit-transform: translateY(-50%);
-    -ms-transform: translateY(-50%);
-    transform: translateY(-50%); }
-  #login .controls {
-    margin-top: 20px; }
-  #login .button-rememember-me {
-    width: 150px;
-    float: left; }
-  #login .button-sign-in {
-    float: right;
-    width: 120px; }
-
-#global-nav .navbar-nav > li > a {
-  padding: 0; }
-#global-nav button {
-  margin-top: 8px; }
-  #global-nav button .glyphicon {
-    top: 2px; }
-
-#projects {
-  padding: 0;
-  margin-top: 80px;
-  width: 80%;
-  /* this is copy & pasted from #tab-links, #tab-recognition styling */ }
-  #projects .project {
-    width: 100%;
-    padding: 10px 0 10px 0;
-    margin: auto;
-    margin-bottom: 4px;
-    display: table;
-    background: #fff; }
-    #projects .project .project-handle {
-      padding-top: 0;
-      width: 50px;
-      height: 100%;
-      text-align: center;
-      display: table-cell; }
-    #projects .project .project-name {
-      width: 30%;
-      padding-right: 2px; }
-    #projects .project .project-year {
-      width: auto;
-      padding-left: 2px; }
-    #projects .project .project-name, #projects .project .project-year {
-      display: table-cell; }
-      #projects .project .project-name input, #projects .project .project-year input {
-        width: 100%; }
-    #projects .project .project-actions {
-      width: 97px;
-      display: table-cell;
-      padding-left: 4px; }
-      #projects .project .project-actions button {
-        margin-top: -2px; }
-    #projects .project .form-control {
-      display: table-cell; }
-    #projects .project .glyphicon {
-      margin: 0; }
-
-/* 
-	project editor 
-*/
-.editor-nav {
-  margin-top: 80px;
-  margin-bottom: 16px; }
-
-#tab-overview label {
-  margin-left: 4px; }
-#tab-overview textarea {
-  resize: vertical; }
-#tab-overview #project-title {
-  width: 60%;
-  float: left; }
-#tab-overview #project-year, #tab-overview #project-type {
-  width: 19%;
-  float: left;
-  margin-left: 1%; }
-#tab-overview #project-summary {
-  clear: both; }
-#tab-overview #button-save-project {
-  width: 80px;
-  float: right; }
-
-#tab-cover {
-  width: 600px;
-  margin: auto;
-  padding: 10px;
-  margin-top: 20px;
-  border-style: solid;
-  border-color: #ccc;
-  border-width: 1px; }
-  #tab-cover .well {
-    margin-bottom: 10px; }
-  #tab-cover #image .media-input {
-    width: 425px;
-    margin-right: 8px; }
-
 #tab-heroes .media, #tab-thumbs .media {
   width: 33%; }
   #tab-heroes .media img, #tab-thumbs .media img {
@@ -173,45 +61,14 @@ button .glyphicon {
     #tab-heroes .media .delete .glyphicon, #tab-thumbs .media .delete .glyphicon {
       margin: 6px 8px 8px 8px; }
 
-#tab-links .link, #tab-recognition .link {
-  width: 100%;
-  padding: 10px 0 10px 0;
-  margin: auto;
-  margin-bottom: 4px;
-  display: table;
-  background: #fff; }
-  #tab-links .link .link-handle, #tab-recognition .link .link-handle {
-    padding-top: 0;
-    width: 50px;
-    height: 100%;
-    text-align: center;
-    display: table-cell; }
-  #tab-links .link .link-label, #tab-recognition .link .link-label {
-    width: 30%;
-    padding-right: 2px; }
-  #tab-links .link .link-href, #tab-recognition .link .link-href {
-    width: auto;
-    padding-left: 2px; }
-  #tab-links .link .link-label, #tab-links .link .link-href, #tab-recognition .link .link-label, #tab-recognition .link .link-href {
-    display: table-cell; }
-    #tab-links .link .link-label input, #tab-links .link .link-href input, #tab-recognition .link .link-label input, #tab-recognition .link .link-href input {
-      width: 100%; }
-  #tab-links .link .link-action, #tab-recognition .link .link-action {
-    width: 97px;
-    display: table-cell;
-    padding-left: 4px; }
-    #tab-links .link .link-action button, #tab-recognition .link .link-action button {
-      margin-top: -2px; }
-  #tab-links .link .form-control, #tab-recognition .link .form-control {
-    display: table-cell; }
-  #tab-links .link .glyphicon, #tab-recognition .link .glyphicon {
-    margin: 0; }
-
 /*
 	modal windows
 */
 .image-uploader .well {
-  padding: 4px; }
+  padding: 4px;
+  margin-bottom: 0px; }
+.image-uploader .modal-body {
+  padding-bottom: 10px; }
 .image-uploader .modal-dialog {
   width: 600px; }
 .image-uploader img, .image-uploader iframe {
@@ -267,10 +124,8 @@ button .glyphicon {
   position: absolute;
   z-index: 9999;
   border: 1px dashed #ff0000; }
-
-.add-link .modal-dialog {
-  max-width: 600px; }
-.add-link #modal-link-label {
-  margin-bottom: 10px; }
+.image-uploader .progress {
+  margin: 10px 0 0 0;
+  border-radius: 0; }
 
 /*# sourceMappingURL=cms.css.map */

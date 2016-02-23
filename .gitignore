@@ -1,3 +1,5 @@
 .DS_Store
 node_modules
 server/uploads
+public/css/.sass-cache/
+public/css/cms.css.map

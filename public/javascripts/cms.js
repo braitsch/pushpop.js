@@ -7,6 +7,7 @@ $(function() {
 		var mediaPreview = $('.image-uploader .media-preview img');
 		var videoPreview = $('.image-uploader .media-preview iframe');
 		var fileDialog = $('.image-uploader .file-dialog');
+		var progressbar = $('.image-uploader .progress');
 		var mediaDropdown = $('.image-uploader .media-dropdown');
 		var imageInput = $('.image-uploader #image .media-input');
 		var videoInput = $('.image-uploader #video .media-input');
@@ -36,18 +37,19 @@ $(function() {
 		// freeforms if ratio, width, and height are undefined //
 			crop:{ x:0, y:0, w:0, h:0 }
 		};
-
 	// media toggle //
 		mediaDropdown.change(function(e){
 			clearThumbnail();
 			if (this.value.toLowerCase() == 'image'){
 				$('#image').show();
 				$('#video').hide();
+				progressbar.show();
 				mediaPreview.show();
 				videoPreview.hide();
 			}	else if (this.value.toLowerCase() == 'video'){
 				$('#image').hide();
 				$('#video').show();
+				progressbar.hide();
 				mediaPreview.hide();
 				videoPreview.show();
 			}
@@ -101,17 +103,16 @@ $(function() {
 				return true;
 			},
 			uploadProgress: function(event, position, total, percentComplete) {
-				console.log(percentComplete + '%');
+			// last 20% is server side image processing //
+				$('.progress-bar').width((percentComplete*.8) + '%');
 			},
 			success: function() {
+				$('.progress-bar').width('100%');
 				console.log('success');
 			},
 			complete: function(xhr) {
-				if ($('.modal').length) {
-					closeModalAndReloadPage();
-				}	else{
-					alert('image upload complete');
-				}
+				$('.progress-bar').width('100%');
+				setTimeout(closeModalAndReloadPage, 500);
 			}
 		});
 		videoInput.bind('paste', function(e){
@@ -226,7 +227,7 @@ $(function() {
 	}
 
 	/*
-		project heroes & thumbs pages
+		gallery page layout
 	*/
 
 	var initMediaPageLayout = function(endpoint)

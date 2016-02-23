@@ -25,155 +25,7 @@ button{
 	resize: none;
 }*/
 
-#login{
-	height:100vh;
-	h6{
-		margin-bottom: 20px;
-	}
-	label{
-		color:#808080;
-		font-size: 13px;
-		font-weight: normal;
-		line-height: 18px;
-		margin-left: 2px;
-		text-shadow: -1px 1px 0 #fff;
-	}
-	form{
-		width:320px;
-		margin:auto;
-		position: relative;
-		top: 45%;
-		-webkit-transform: translateY(-50%);
-		-ms-transform: translateY(-50%);
-		transform: translateY(-50%);
-	}
-	.controls{
-		margin-top: 20px;
-	}
-	.button-rememember-me{
-		width: 150px;
-		float:left;
-	}
-	.button-sign-in{
-		float:right;
-		width: 120px;
-	}
-}
 
-#global-nav{
-	.navbar-nav>li>a{
-		padding: 0;
-	}
-	button{
-		margin-top:8px;
-		.glyphicon{
-			top:2px;
-		}
-	}
-}
-
-#projects{
-	padding:0;
-	margin-top: 80px;
-	width:80%;
-/* this is copy & pasted from #tab-links, #tab-recognition styling */
-	.project{
-		width: 100%;
-		padding: 10px 0 10px 0;
-		margin: auto;
-		margin-bottom: 4px;
-		display: table;
-		background: #fff;
-		.project-handle{
-			padding-top:0;
-			width: 50px;
-			height:100%;
-			text-align:center;
-			display: table-cell;
-		}
-		.project-name{
-			width:30%;
-			padding-right: 2px;
-		}
-		.project-year{
-			width: auto;
-			padding-left: 2px;
-		}
-		.project-name, .project-year {
-			display: table-cell;
-			input{
-				width:100%;
-			}
- 		}
-		.project-actions{
-			width:97px;
-			display: table-cell;
-			button{
-				margin-top: -2px;
-			}
-			padding-left:4px;
-		}
-		.form-control{
-			display: table-cell;
-		}
-		.glyphicon{
-			margin: 0;
-		}
-	}
-}
-
-/* 
-	project editor 
-*/
-
-.editor-nav{
-	margin-top:80px;
-	margin-bottom: 16px;
-}
-
-#tab-overview{
-	label{
-		margin-left: 4px;
-	}
-	textarea{
-		resize: vertical;
-	}
-	#project-title{
-		width:60%;
-		float:left;
-	}
-	#project-year, #project-type{
-		width:19%;
-		float:left;
-		margin-left: 1%;
-	}
-	#project-summary{
-		clear:both;
-	}
-	#button-save-project{
-		width:80px;
-		float:right;
-	}
-}
-
-#tab-cover{
-	width:600px;
-	margin: auto;
-	padding: 10px;
-	margin-top: 20px;
-	border-style:solid;
-	border-color:#ccc;
-	border-width: 1px;
-	.well{
-		margin-bottom: 10px;
-	}
-	#image{
-		.media-input{
-			width:425px;
-			margin-right: 8px;
-		}
-	}
-}
 
 #tab-heroes, #tab-thumbs{
 	.media{
@@ -230,53 +82,6 @@ button{
 		}
 	}
 }
-
-#tab-links, #tab-recognition{
-	.link{
-		width: 100%;
-		padding: 10px 0 10px 0;
-		margin: auto;
-		margin-bottom: 4px;
-		display: table;
-		background: #fff;
-		.link-handle{
-			padding-top:0;
-			width: 50px;
-			height:100%;
-			text-align:center;
-			display: table-cell;
-		}
-		.link-label{
-			width:30%;
-			padding-right: 2px;
-		}
-		.link-href{
-			width: auto;
-			padding-left: 2px;
-		}
-		.link-label, .link-href {
-			display: table-cell;
-			input{
-				width:100%;
-			}
- 		}
-		.link-action{
-			width:97px;
-			display: table-cell;
-			button{
-				margin-top: -2px;
-			}
-			padding-left:4px;
-		}
-		.form-control{
-			display: table-cell;
-		}
-		.glyphicon{
-			margin: 0;
-		}
-	}
-}
-
 /*
 	modal windows
 */
@@ -284,6 +89,10 @@ button{
 .image-uploader{
 	.well{
 		padding: 4px;
+		margin-bottom: 0px;
+	}
+	.modal-body{
+		padding-bottom: 10px;
 	}
 	.modal-dialog{
 		width:600px;
@@ -358,14 +167,10 @@ button{
 		z-index:9999;
 		border: 1px dashed #ff0000;
 	}
+	.progress{
+		margin: 10px 0 0 0;
+		border-radius: 0;
+	}
 }
 
-.add-link{
-	.modal-dialog{
-		max-width: 600px;
-	}
-	#modal-link-label{
-		margin-bottom: 10px;
-	}
-}
 
