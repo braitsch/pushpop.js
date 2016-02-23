@@ -1,6 +1,12 @@
 $(function() {
 
 	var endpoint = '/gallery';
+	var thumb = {
+		mode:'normal',
+		width:100, height:100,
+		ratio:{ width:16, height:9},
+		crop:{ x:0, y:0, w:0, h:0 }
+	};
 
 	var initMediaUploader = function(endpoint){
 		var form = $('.image-uploader form');
@@ -23,20 +29,6 @@ $(function() {
 		var video = {
 			url:'',
 			preview:'',
-		};
-		var thumb = {
-		// force set dimensions, this ignores ratio //
-			// width:520,
-			// height:144,
-			// width:800,
-			// height:222,
-		// ratio only applies if width & height are absent //
-			ratio:{
-				width:18,
-				height:5
-			},
-		// freeforms if ratio, width, and height are undefined //
-			crop:{ x:0, y:0, w:0, h:0 }
 		};
 	// media toggle //
 		mediaDropdown.change(function(e){
@@ -91,9 +83,14 @@ $(function() {
 					thumb.crop.y = ($thumb.offset().top - $image.offset().top) * scaleY;
 					thumb.crop.w = $thumb.width() * scaleX;
 					thumb.crop.h = $thumb.height() * scaleY;
+				/*  
+					clear the width & height because only 'fixed size' mode 
+					explicitly sets the actual width & height of the thumbnail
+				*/
+					if (thumb.mode != 'fixed size') {thumb.width = 0; thumb.height = 0};
 					formData.push({name:'thumb', value:JSON.stringify(thumb)});
 				}
-				formData.push({name:'caption', value:$('#caption input').val()});
+			//	formData.push({name:'caption', value:$('#caption input').val()});
 				console.log('------ sending data ------');
 				for (var i=0; i < formData.length; i++) {
 				// ensure the form has an file before we send it //
@@ -147,6 +144,67 @@ $(function() {
 		}
 
 		/*
+			thumbnail settings
+		*/
+
+		$('.thumb-settings .w').keyup(onWidthChanged);
+		$('.thumb-settings .h').keyup(onHeightChanged);
+
+		function onWidthChanged(e)
+		{
+			if (validateThumbSize(e)){
+				if (thumb.mode == 'fixed size'){
+					thumb.width = $(this).val();
+				}	else if (thumb.mode == 'fixed ratio'){
+					thumb.ratio.width = $(this).val();
+				}
+				return true;
+			}
+			return false;
+		}		
+		function onHeightChanged(e)
+		{
+			if (validateThumbSize(e)){
+				if (thumb.mode == 'fixed size'){
+					thumb.height = $(this).val();
+				}	else if (thumb.mode == 'fixed ratio'){
+					thumb.ratio.height = $(this).val();
+				}
+				return true;
+			}
+			return false;
+		}
+		function validateThumbSize(e) {
+			if ($(e.target).val().toString().length == 4) return false;
+			var key = window.event ? e.keyCode : e.which;
+			if (key === 8 || key === 46 || key === 37 || key === 39) {
+				return true;
+			} 	else if ( key < 48 || key > 57 ) {
+				return false;
+			}	else {
+				return true;
+			}
+		};
+		$('.thumb-settings .s1').change(function(e) {
+			thumb.mode = this.value.toLowerCase();
+			if (thumb.mode == 'normal'){
+				$('.thumb-settings .w').val('');
+				$('.thumb-settings .h').val('');
+			}	else if (thumb.mode == 'fixed ratio'){
+				$('.thumb-settings .w').val(thumb.ratio.width);
+				$('.thumb-settings .h').val(thumb.ratio.height);
+			}	else if (thumb.mode == 'fixed size'){
+				$('.thumb-settings .w').val(thumb.width);
+				$('.thumb-settings .h').val(thumb.height);
+			}
+			$('.thumb-settings .w').prop('disabled', thumb.mode == 'normal');
+			$('.thumb-settings .h').prop('disabled', thumb.mode == 'normal');
+		});
+		$('.thumb-settings .s2').change(function(e) {
+			$('.thumb-generator').css('border-color', this.value.toLowerCase()); 
+		});
+
+		/*
 			thumbnail generator
 		*/
 		
@@ -163,7 +221,7 @@ $(function() {
 			thumb.crop.y = 0;
 			thumb.crop.w = 0;
 			thumb.crop.h = 0;
-			$('#caption input').val('');
+		//	$('#caption input').val('');
 		}
 		var getMousePosition = function(e)
 		{
@@ -176,8 +234,9 @@ $(function() {
 			var mouse = getMousePosition(e);
 			var width = mouse.x - thumb.crop.x;
 			var height = mouse.y - thumb.crop.y;
-		// force preseve aspect ratio is defined //
-			if (thumb.ratio) height = width * (thumb.ratio.height/thumb.ratio.width);
+			if (thumb.mode == 'fixed ratio'){
+				height = width * (thumb.ratio.height/thumb.ratio.width);
+			}
 			$thumb.css({
 				width	:width,
 				height	:height
@@ -192,12 +251,13 @@ $(function() {
 				left	:thumb.crop.x,
 				top		:thumb.crop.y,
 			});
-		// allow resizing if width & height are zero //
-			if (!thumb.width && !thumb.height){
+		// allow resizing //
+			if (thumb.mode != 'fixed size'){
 				$image.bind("mousemove", resize);
 				$image.css('cursor', 'crosshair');
 				$thumb.css({ width:0, height:0 });
 			}	else{
+		// fixed size mode //
 				$thumb.css({
 					width	:thumb.width * ($image.width()/image.width),
 					height	:thumb.height * ($image.height()/image.height)
@@ -213,7 +273,7 @@ $(function() {
 		$(window).bind("mouseup", onMouseUp);
 		$image.bind("mousedown", onMouseDown);
 		document.addEventListener("keydown", function(e){
-		// allow arrow keys to fine tune placement of the thumbnail //
+	// allow arrow keys to fine tune placement of the thumbnail //
 			if ($thumb.is(":visible")){
 				if (e.keyCode == 37){
 					thumb.crop.x--;

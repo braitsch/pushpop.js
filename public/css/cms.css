@@ -112,9 +112,9 @@ button .glyphicon {
     .image-uploader .thumb-settings input {
       width: 60px; }
     .image-uploader .thumb-settings .s1 {
-      width: 109px; }
+      width: 100px; }
     .image-uploader .thumb-settings .s2 {
-      width: 70px; }
+      width: 79px; }
   .image-uploader .media-settings select {
     width: 90px;
     float: left;
@@ -142,7 +142,7 @@ button .glyphicon {
     height: 0;
     position: absolute;
     z-index: 9999;
-    border: 1px dashed #ff0000; }
+    border: 1px dashed #000000; }
   .image-uploader .progress {
     margin: 10px 0 0 0;
     border-radius: 0; }

@@ -64,6 +64,7 @@ var getImageData = function(req, cback)
 	req.busboy.on('field', function(key, value, keyTruncated, valueTruncated) {
 		if (key == 'thumb' && value != '') {
 			image.thumbdata = JSON.parse(value);
+			console.log(image.thumbdata);
 		}	else if (key == 'caption' && value != '') {
 			image.caption = value;
 		}
@@ -89,11 +90,12 @@ var saveThumb = function(image, cback)
 		log('no data to create thumbnail');
 		cback();
 	}	else{
-		gm(image.path + '/' + image.name + image.type)
-		.crop(thumb.crop.w, thumb.crop.h, thumb.crop.x, thumb.crop.y)
-		.resize(thumb.width, thumb.height, '!')
-		.noProfile()
-		.write(image.path + '/' + image.name + '_thumb'+ image.type, function(){
+		var img = gm(image.path + '/' + image.name + image.type);
+		img.crop(thumb.crop.w, thumb.crop.h, thumb.crop.x, thumb.crop.y);
+	// do not resize if we did not explicitly receive a width & height value //
+		if (thumb.width != 0 && thumb.height != 0) img.resize(thumb.width, thumb.height, '!');
+		img.noProfile();
+		img.write(image.path + '/' + image.name + '_thumb'+ image.type, function(){
 			log('thumb image saved');
 			cback();
 		});
