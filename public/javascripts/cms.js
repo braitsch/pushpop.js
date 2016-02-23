@@ -8,6 +8,7 @@ $(function() {
 		var videoPreview = $('.image-uploader .media-preview iframe');
 		var fileDialog = $('.image-uploader .file-dialog');
 		var progressbar = $('.image-uploader .progress');
+		var thumbSettings = $('.image-uploader .thumb-settings');
 		var mediaDropdown = $('.image-uploader .media-dropdown');
 		var imageInput = $('.image-uploader #image .media-input');
 		var videoInput = $('.image-uploader #video .media-input');
@@ -43,15 +44,17 @@ $(function() {
 			if (this.value.toLowerCase() == 'image'){
 				$('#image').show();
 				$('#video').hide();
-				progressbar.show();
 				mediaPreview.show();
 				videoPreview.hide();
+				progressbar.show();
+				thumbSettings.show();
 			}	else if (this.value.toLowerCase() == 'video'){
 				$('#image').hide();
 				$('#video').show();
-				progressbar.hide();
 				mediaPreview.hide();
 				videoPreview.show();
+				progressbar.hide();
+				thumbSettings.hide();
 			}
 		});
 	// open file dialog when the select button is clicked //

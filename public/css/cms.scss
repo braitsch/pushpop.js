@@ -116,7 +116,36 @@ button{
 		width:100%;
 		height:100%;
 	}
-	#caption{
+	.thumb-settings{
+		text-align: left;
+		label{
+			margin-right: 5px;
+			margin-left: 5px;
+		}
+		.ts{
+			margin-left: 4px;
+			margin-right: 5px;
+		}
+		input{
+			width: 60px;
+		}
+		.s1{
+			width:109px;
+		}
+		.s2{
+			width:70px;
+		}
+		margin-bottom:6px;
+	}
+	.media-settings{
+		select{
+			width:90px;
+			float:left;
+			margin-right: 6px;
+			text-indent: 16px;
+		}
+	}
+/*	#caption{
 		input{
 			width:472px;
 		}
@@ -127,13 +156,7 @@ button{
 			margin-right:2px;
 		}
 		margin-bottom:4px;
-	}
-	select{
-		width:90px;
-		float:left;
-		margin-right: 6px;
-		text-indent: 16px;
-	}
+	}*/
 	#image{
 		.media-input{
 			width:320px;
