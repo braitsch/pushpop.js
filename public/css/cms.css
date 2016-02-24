@@ -1,4 +1,11 @@
 /*
+	navigation
+*/
+.navbar .btn {
+  width: 100px;
+  margin: 10px 0 0 5px; }
+
+/*
 	gallery
 */
 #grid {

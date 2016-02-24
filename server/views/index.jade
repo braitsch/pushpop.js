@@ -8,8 +8,9 @@ block content
 				a.navbar-brand(href='/admin/projects') Gallery
 			ul.nav.navbar-nav.navbar-right
 				li
-					.btn.btn-default.show-modal(style='margin-top:10px')
-						| Add Media
+					#donate-btn.btn.btn-default Donate
+				li
+					.btn.btn-default.show-modal Add Media
 	.container
 		#grid(data-columns)
 			- for (var i=0; i<files.length; i++) {

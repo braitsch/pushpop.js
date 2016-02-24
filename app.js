@@ -15,6 +15,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(__dirname + '/public'));
 
 require('./server/routes')(app);
+require('./server/stripe')(app);
 
 http.listen(app.get('port'), function(q, r)
 {
