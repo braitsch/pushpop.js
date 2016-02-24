@@ -9,18 +9,18 @@ $(function() {
 	};
 
 	var initMediaUploader = function(endpoint){
-		var form = $('.image-uploader form');
-		var mediaPreview = $('.image-uploader .media-preview img');
-		var videoPreview = $('.image-uploader .media-preview iframe');
-		var fileDialog = $('.image-uploader .file-dialog');
-		var progressbar = $('.image-uploader .progress');
-		var thumbSettings = $('.image-uploader .thumb-settings');
-		var mediaDropdown = $('.image-uploader .media-dropdown');
-		var imageInput = $('.image-uploader #image .media-input');
-		var videoInput = $('.image-uploader #video .media-input');
-		var selectButton = $('.image-uploader .btn-select');
-		var uploadButton = $('.image-uploader .btn-upload');
-		var saveVideoButton = $('.image-uploader .btn-save-video');
+		var form = $('.modal-uploader form');
+		var mediaPreview = $('.modal-uploader .media-preview img');
+		var videoPreview = $('.modal-uploader .media-preview iframe');
+		var fileDialog = $('.modal-uploader .file-dialog');
+		var progressbar = $('.modal-uploader .progress');
+		var thumbSettings = $('.modal-uploader .thumb-settings');
+		var mediaDropdown = $('.modal-uploader .media-dropdown');
+		var imageInput = $('.modal-uploader #image .media-input');
+		var videoInput = $('.modal-uploader #video .media-input');
+		var selectButton = $('.modal-uploader .btn-select');
+		var uploadButton = $('.modal-uploader .btn-upload');
+		var saveVideoButton = $('.modal-uploader .btn-save-video');
 
 		var image = {
 			width:0,
@@ -139,8 +139,8 @@ $(function() {
 		});
 		var closeModalAndReloadPage = function()
 		{
-			$('.image-uploader').modal('hide');
-			$('.image-uploader').on('hidden.bs.modal', function (e) { location.reload(true); });
+			$('.modal-uploader').modal('hide');
+			$('.modal-uploader').on('hidden.bs.modal', function (e) { location.reload(true); });
 		}
 
 		/*
@@ -213,7 +213,7 @@ $(function() {
 		var $container = $('.media-preview');
 		$thumb.hide();
 		$image.on('dragstart', function(e) { e.preventDefault(); });
-		var mouseOffset = parseInt($('.modal-body').css('padding')) + parseInt($('.image-uploader .well').css('padding'));
+		var mouseOffset = parseInt($('.modal-body').css('padding')) + parseInt($('.modal-uploader .well').css('padding'));
 		var clearThumbnail = function()
 		{
 			$thumb.hide();
@@ -296,7 +296,7 @@ $(function() {
 	var initMediaPageLayout = function(endpoint)
 	{
 		initMediaUploader(endpoint);
-		$('.show-modal').click(function(){ $('.image-uploader').modal('show'); });
+		$('.show-modal').click(function(){ $('.modal-uploader').modal('show'); });
 	// add delete handler //
 		$('.media a').on('click', function(e) {
 			e.preventDefault();
