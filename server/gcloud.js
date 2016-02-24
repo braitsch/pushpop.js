@@ -1,5 +1,4 @@
 
-
 var gc;
 var gcloud = function(settings)
 {
@@ -21,18 +20,26 @@ var gcloud = function(settings)
 		});
 	};
 
-	this.listFiles = function(path)
+	this.listFiles = function(path, cback)
 	{
 		bucket.getFiles({ prefix:path }, function(e, files) {
 			if (e) {
 				console.log(e);
 			}	else{
+				var a = [];
 				for (var i=0; i<files.length; i++){
-				// ignore empty directories //
-					if (files[i].metadata.size != 0){
-						console.log(files[i].name, (files[i].metadata.size/1024/1024).toFixed(2) + 'MB');
+				// ignore empty directories & thumbnails //
+					if (files[i].metadata.size != 0 && files[i].name.search('_thumb') != -1){
+						a.push({
+							'name' : files[i].name,
+							'date' : files[i].metadata.updated,
+							'size' : (files[i].metadata.size/1024/1024).toFixed(2) + 'MB'
+						});
 					}
 				};
+			// return list of files sorted by date descending //
+				a.sort(function(a,b){ return new Date(b.date) - new Date(a.date); });
+				cback(a);
 			}
 		});
 	}

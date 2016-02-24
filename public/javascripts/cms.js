@@ -1,5 +1,14 @@
 $(function() {
 
+// turn on images after grid layout has initialized //
+	$('#grid img').each(function(){
+		$(this).show();
+		$(this).click(function(){
+			var url = $(this).prop('src').replace('_thumb', '');
+			window.open(url, '_blank');
+		});
+	});
+
 	var endpoint = '/gallery';
 	var thumb = {
 		mode:'normal',
@@ -302,19 +311,6 @@ $(function() {
 			e.preventDefault();
 			e.stopImmediatePropagation();
 			$.post( endpoint + '/delete', {type:$(this).data('type'), url:$(this).data('url')}, function(response){ location.reload(true); });
-		});
-	// and listen for sorting //
-		Sortable.create(document.getElementById("media-list"), {
-			animation: 500,
-			draggable:'.media', 
-			onUpdate: function (e) {
-				$.post( endpoint + '/sort', {
-					oIndex:	e.oldIndex,
-					nIndex:	e.newIndex
-				}, function(response){
-					console.log(response);
-				});
-			},
 		});
 	}
 

@@ -8,7 +8,6 @@ exports.settings = function(obj)
 {
 	opts = obj;	
 	opts.remote = getRemotePath(obj.remote);
-	//opts.gcloud.listFiles();
 }
 
 exports.remote = function(dest)
@@ -49,6 +48,11 @@ exports.upload = function(req, cback)
 exports.delete = function(filename, cback)
 {
 //	var result = { };
+}
+
+exports.listFiles = function(directory, cback)
+{
+	opts.gcloud.listFiles(getRemotePath(directory), cback);
 }
 
 var getImageData = function(req, cback)

@@ -1,5 +1,4 @@
 
-
 var iu = require('./image-upload');
 iu.settings({
 	'guid' : true,
@@ -16,9 +15,13 @@ iu.settings({
 
 module.exports = function(app) {
 
+	app.locals.cdn = 'https://storage.googleapis.com/node-upload';
+
 	app.get('/', function (req, res)
 	{	
-		res.render('index');
+		iu.listFiles('/my-project', function(files){
+			res.render('index', { files : files });
+		})
 	});
 
 	app.post('/gallery/add', function(req, res)
