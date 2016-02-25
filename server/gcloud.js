@@ -5,7 +5,12 @@ var gcloud = function(settings)
 	console.log('connecting to gcloud :: ', settings)
 	var gcloud = require('gcloud')({
 		projectId: process.env.GCLOUD_PROJECT,
-		keyFilename: process.env.GCLOUD_KEY_FILE
+//			credentials: JSON.parse(process.env.GCLOUD_JSON)
+		credentials: {
+			private_key : process.env.GCLOUD_KEY,
+			client_email : process.env.GCLOUD_EMAIL
+		}
+		//keyFilename: process.env.GCLOUD_KEY_FILE
 	});
 	var bucket = gcloud.storage().bucket(settings.bucket);
 /*
