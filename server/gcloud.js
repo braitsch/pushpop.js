@@ -1,13 +1,13 @@
 
 var gc;
-var gcloud = function(settings)
+var gcloud = function(bucketName)
 {
-	console.log('connecting to gcloud :: ', settings)
+	console.log('connecting to gcloud :: ', bucketName)
 	var gcloud = require('gcloud')({
 		projectId: process.env.GCLOUD_PROJECT,
 			credentials: JSON.parse(process.env.GCLOUD_JSON) 
 	});
-	var bucket = gcloud.storage().bucket(settings.bucket);
+	var bucket = gcloud.storage().bucket(bucketName);
 /*
 	bucket must first be made public for access over http
 	http://goo.gl/z5Rm2R
@@ -17,7 +17,7 @@ var gcloud = function(settings)
 			console.log('unable to connnect to gcloud', e);
 		}	else{
 			if (response[0][0].entity == 'allUsers' && response[0][0].role == 'READER'){
-				console.log('gcloud :: bucket', settings.bucket, 'is publicly visible');
+				console.log('gcloud :: bucket', bucketName, 'is publicly visible');
 			}
 		}
 	});

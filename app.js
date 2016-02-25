@@ -2,14 +2,12 @@
 var express = require('express');
 var app = express();
 var http = require('http').Server(app);
-var busboy = require('connect-busboy');
 var bodyParser = require("body-parser");
 
 app.locals.pretty = true;
 app.set('port', process.env.PORT || 3000);
 app.set('view engine', 'jade');
 app.set('views', './server/views');
-app.use(busboy());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(__dirname + '/public'));

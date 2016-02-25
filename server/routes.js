@@ -1,12 +1,13 @@
 
+var fs = require('fs');
 var iu = require('./image-upload');
 iu.settings({
 	'guid' : true,
 	'verbose' : true,
-	'local' : __dirname + '/uploads',
-	'remote' : 'my-project',
-	'gcloud' : require('./gcloud')({ 'bucket' : 'node-upload' })
+	'local' : __dirname + '/uploads'
 });
+
+iu.gcloud('node-upload', 'my-project');
 
 module.exports = function(app) {
 
@@ -19,17 +20,15 @@ module.exports = function(app) {
 		})
 	});
 
-	app.post('/gallery/add', function(req, res)
+	app.post('/gallery/add', iu.upload, function(req, res)
 	{
-		//iu.remote('');
-		iu.upload(req, function(result){
-			console.log('result', result);
-			if (result.error == undefined){
-				res.send('ok').status(200);
-			}	else{
-				res.send(result.error).status(400);
-			}
-		});
+		if (iu.error){
+			res.send(iu.error).status(400);
+		}	else{
+			console.log('image = ', req.image);
+			console.log('video = ', req.video);
+			res.send('ok').status(200);
+		}
 	});
 
 	app.post('/gallery/sort', function(req, res)
