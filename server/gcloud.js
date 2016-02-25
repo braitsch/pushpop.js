@@ -3,13 +3,15 @@ var gc;
 var gcloud = function(settings)
 {
 	console.log('connecting to gcloud :: ', settings)
+	// console.log(process.env.GCLOUD_KEY);
+	// console.log(process.env.GCLOUD_EMAIL);
 	var gcloud = require('gcloud')({
 		projectId: process.env.GCLOUD_PROJECT,
-//			credentials: JSON.parse(process.env.GCLOUD_JSON)
-		credentials: {
-			private_key : process.env.GCLOUD_KEY,
-			client_email : process.env.GCLOUD_EMAIL
-		}
+			credentials: JSON.parse(process.env.GCLOUD_JSON) 
+		// credentials: {
+		// 	private_key : process.env.GCLOUD_KEY,
+		// 	client_email : process.env.GCLOUD_EMAIL
+		// }
 		//keyFilename: process.env.GCLOUD_KEY_FILE
 	});
 	var bucket = gcloud.storage().bucket(settings.bucket);
@@ -19,8 +21,12 @@ var gcloud = function(settings)
 */
 	if (settings.public) {
 		bucket.makePublic(function(e, response){
-			if (response[0][0].entity == 'allUsers' && response[0][0].role == 'READER'){
-				console.log('gcloud :: bucket', settings.bucket, 'is publicly visible');
+			if (e){
+				console.log('unable to connnect to gcloud', e);
+			}	else{
+				if (response[0][0].entity == 'allUsers' && response[0][0].role == 'READER'){
+					console.log('gcloud :: bucket', settings.bucket, 'is publicly visible');
+				}
 			}
 		});
 	};
