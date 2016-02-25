@@ -1,12 +1,19 @@
 
-var gc;
 var gcloud = function(bucketName)
 {
+	var gcloud;
 	console.log('connecting to gcloud :: ', bucketName)
-	var gcloud = require('gcloud')({
-		projectId: process.env.GCLOUD_PROJECT,
+	if (process.env.GCLOUD_KEY_FILE){
+		gcloud = require('gcloud')({
+			projectId: process.env.GCLOUD_PROJECT,
+			keyFilename: process.env.GCLOUD_KEY_FILE,
+		});
+	}	else{
+		gcloud = require('gcloud')({
+			projectId: process.env.GCLOUD_PROJECT,
 			credentials: JSON.parse(process.env.GCLOUD_JSON) 
-	});
+		});
+	}
 	var bucket = gcloud.storage().bucket(bucketName);
 /*
 	bucket must first be made public for access over http
@@ -59,10 +66,9 @@ var gcloud = function(bucketName)
 	}
 }
 
-module.exports = function(o) 
+module.exports = function(bucketName) 
 {
-	if (!gc) gc = new gcloud(o);
-	return gc;
+	return new gcloud(bucketName);
 };
 
 
