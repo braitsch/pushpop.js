@@ -1,6 +1,6 @@
 .DS_Store
 node_modules
+server/uploads/*
 !server/uploads/.gitkeep
 public/css/.sass-cache/
 public/css/cms.css.map
-public/img/checkout-logo.png

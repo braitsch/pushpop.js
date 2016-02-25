@@ -6,7 +6,7 @@ $(function() {
 // initialize stripe checkout //
 	var handler = StripeCheckout.configure({
 		key: 'pk_test_qwrb8GsCjfgqxKOKErYzi66E',
-		image: '/img/checkout-logo.png',
+		image: '/img/world-series.jpg',
 		locale: 'auto',
 		panelLabel: 'Donate {{amount}}',
 		token: function(token) {
