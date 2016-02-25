@@ -8,6 +8,8 @@ exports.settings = function(obj)
 {
 	opts = obj;	
 	opts.remote = getRemotePath(obj.remote);
+// ensure local upload directory exists //
+	if (!fs.existsSync(obj.local)) fs.mkdirSync(obj.local);
 }
 
 exports.remote = function(dest)
@@ -64,21 +66,20 @@ var getImageData = function(req, cback)
 		image.path = opts.local;
 		image.type = getFileType(filename);
 		image.name = getFileName(filename);
+		req.busboy.on('field', function(key, value, keyTruncated, valueTruncated) {
+			if (key == 'thumb' && value != '') {
+				image.thumbdata = JSON.parse(value);
+			}	else if (key == 'caption' && value != '') {
+				image.caption = value;
+			}
+		});
+	// ensure we have time to parse any fields //
+		setTimeout(cback, 500, image);
 	});
-	req.busboy.on('field', function(key, value, keyTruncated, valueTruncated) {
-		if (key == 'thumb' && value != '') {
-			image.thumbdata = JSON.parse(value);
-			console.log(image.thumbdata);
-		}	else if (key == 'caption' && value != '') {
-			image.caption = value;
-		}
-	});
-	setTimeout(cback, 100, image);
 }
 
 var saveLarge = function(image, cback)
 {
-	if (!fs.existsSync(image.path)) fs.mkdirSync(image.path);
 	var fstream = fs.createWriteStream(image.path + '/' + image.name + image.type);
 	image.file.pipe(fstream);
 	fstream.on('close', function(e){

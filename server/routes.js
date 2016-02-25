@@ -5,10 +5,7 @@ iu.settings({
 	'verbose' : true,
 	'local' : __dirname + '/uploads',
 	'remote' : 'my-project',
-	'gcloud' : require('./gcloud')({
-		'public' : true,
-		'bucket' : 'node-upload',
-	})
+	'gcloud' : require('./gcloud')({ 'bucket' : 'node-upload' })
 });
 
 module.exports = function(app) {
