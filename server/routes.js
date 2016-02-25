@@ -6,10 +6,8 @@ iu.settings({
 	'local' : __dirname + '/uploads',
 	'remote' : 'my-project',
 	'gcloud' : require('./gcloud')({
-		'projectId' : process.env.GCLOUD_PID,
-		'pathToKeyFile' : process.env.GCLOUD_KEY,
-		'bucket' : 'node-upload',
 		'public' : true,
+		'bucket' : 'node-upload',
 	})
 });
 

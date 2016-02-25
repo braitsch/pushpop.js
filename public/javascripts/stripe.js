@@ -1,5 +1,8 @@
 
 $(function() {
+
+	var amount = 500;
+	var details = 'open source donation';
 // initialize stripe checkout //
 	var handler = StripeCheckout.configure({
 		key: 'pk_test_qwrb8GsCjfgqxKOKErYzi66E',
@@ -7,7 +10,7 @@ $(function() {
 		locale: 'auto',
 		panelLabel: 'Donate {{amount}}',
 		token: function(token) {
-			$.post('/charge', { token : token.id }, 
+			$.post('/charge', { token : token.id, amount : amount, details : details }, 
 				function(response){
 					console.log('response', response);
 				}
@@ -18,8 +21,8 @@ $(function() {
 	// open checkout with options //
 		handler.open({
 			name: 'braitsch.io',
-			description: 'open source donation',
-			amount: 2000
+			amount: amount,
+			description: details
 		});
 		e.preventDefault();
 	});
