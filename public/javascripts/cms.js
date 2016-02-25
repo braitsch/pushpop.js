@@ -129,14 +129,14 @@ $(function() {
 				video.url = videoInput.val();
 				if (video.url.search('youtube')!= -1){
 					video.id = video.url.substring(video.url.lastIndexOf("?v=") + 3);
-					video.url = 'http://www.youtube.com/embed/' + video.id;
+					video.url = 'https://www.youtube.com/embed/' + video.id;
 					videoPreview.attr('src', video.url)
-					video.preview = 'http://img.youtube.com/vi/'+video.id+'/maxresdefault.jpg';
+					video.preview = 'https://img.youtube.com/vi/'+video.id+'/maxresdefault.jpg';
 				}	else if (video.url.search('vimeo')!= -1){
 					video.id = video.url.substring(video.url.lastIndexOf("/") + 1);
-					video.url = 'http://player.vimeo.com/video/' + video.id;
+					video.url = 'https://player.vimeo.com/video/' + video.id;
 					videoPreview.attr('src', video.url);
-					$.get('http://vimeo.com/api/v2/video/' + video.id + '.json', function(response){
+					$.get('https://vimeo.com/api/v2/video/' + video.id + '.json', function(response){
 						video.preview = response[0].thumbnail_large;
 					});
 				}
