@@ -1,21 +1,18 @@
 
-var fs = require('fs');
 var iu = require('./upload');
 iu.settings({
 	'guid' : true,
 	'verbose' : true,
-	'local' : __dirname + '/uploads'
+	'local' : 'uploads'
 });
 
 iu.gcloud('node-upload', 'my-project');
 
 module.exports = function(app) {
 
-	app.locals.cdn = 'https://storage.googleapis.com/node-upload';
-
 	app.get('/', function (req, res)
 	{	
-		iu.listFiles('/my-project', function(files){
+		iu.listFiles(function(files){
 			res.render('index', { files : files });
 		})
 	});

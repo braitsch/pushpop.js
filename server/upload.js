@@ -2,6 +2,7 @@
 var opts;
 var fs = require('fs');
 var gm = require('gm').subClass({ imageMagick: true });
+var path = require('path');
 var guid = function(){return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {var r = Math.random()*16|0,v=c=='x'?r:r&0x3|0x8;return v.toString(16);});}
 
 var gCloud;
@@ -9,7 +10,9 @@ var Busboy = require('busboy');
 
 exports.settings = function(obj)
 {
-	opts = obj;	
+	opts = obj;
+// make local upload directory relative to root //
+	opts.local = path.join(__dirname, '..', obj.local);
 	opts.remote = getRemotePath(obj.remote);
 // ensure local upload directory exists //
 	if (!fs.existsSync(obj.local)) fs.mkdirSync(obj.local);
@@ -82,9 +85,26 @@ exports.delete = function(filename, cback)
 //	var result = { };
 }
 
-exports.listFiles = function(directory, cback)
+exports.listFiles = function(cback)
 {
-	gCloud.listFiles(getRemotePath(directory), cback);
+	if (gCloud){
+		gCloud.listFiles(opts.remote, cback);
+	}	else{
+		var a = [];
+		fs.readdir(opts.local, function (e, files) {
+			if (e) {
+				log('error reading local upload directory');
+				cback(a);
+			}	else{
+				files.forEach(function (name) { 
+					if (name.indexOf('.') != 0 && name.search('_thumb') != -1) {
+						a.push({ path : name}); 
+					}
+				});
+				cback(a);
+			}
+		});
+	}
 }
 
 var getFileName = function(name)

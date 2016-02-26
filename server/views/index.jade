@@ -16,7 +16,7 @@ block content
 			- for (var i=0; i<files.length; i++) {
 				.wrap
 					.item
-						img(src=cdn+'/'+files[i].name style='display:none')
+						img(src=files[i].path style='display:none')
 			- }
 		#footer
 	include modal-upload

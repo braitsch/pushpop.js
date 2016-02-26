@@ -1,7 +1,9 @@
 
+
 var gcloud = function(bucketName)
 {
 	var gcloud;
+	var gcloudURL = 'https://storage.googleapis.com';
 	console.log('connecting to gcloud :: ', bucketName)
 	if (process.env.GCLOUD_KEY_FILE){
 		gcloud = require('gcloud')({
@@ -42,7 +44,8 @@ var gcloud = function(bucketName)
 						a.push({
 							'name' : files[i].name,
 							'date' : files[i].metadata.updated,
-							'size' : (files[i].metadata.size/1024/1024).toFixed(2) + 'MB'
+							'size' : (files[i].metadata.size/1024/1024).toFixed(2) + 'MB',
+							'path' : gcloudURL +'/'+ bucketName +'/'+ files[i].name,
 						});
 					}
 				};
