@@ -8,6 +8,7 @@ iu.settings({
 
 iu.gcloud('node-upload', 'my-project');
 
+var activeProject;
 var mongo = require('./mongo');
 
 module.exports = function(app) {
@@ -18,6 +19,13 @@ module.exports = function(app) {
 			res.render('index', { files : files });
 		})
 	});
+
+	app.get('/project/:id', function(req, res){
+		activeProject = req.params['id'];
+		iu.listFiles(function(files){
+			res.render('index', { files : files });
+		})
+	});	
 
 	app.get('/wipe', function(req, res){
 		iu.wipe(function(){
