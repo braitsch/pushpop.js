@@ -99,6 +99,7 @@ $(function() {
 					if (thumb.mode != 'fixed size') {thumb.width = 0; thumb.height = 0};
 					formData.push({name:'thumb', value:JSON.stringify(thumb)});
 				}
+				formData.push({name:'type', value:'image'});
 			//	formData.push({name:'caption', value:$('#caption input').val()});
 				console.log('------ sending data ------');
 				for (var i=0; i < formData.length; i++) {

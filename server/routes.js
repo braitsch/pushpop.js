@@ -1,6 +1,6 @@
 
 var fs = require('fs');
-var iu = require('./image-upload');
+var iu = require('./upload');
 iu.settings({
 	'guid' : true,
 	'verbose' : true,

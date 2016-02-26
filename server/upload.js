@@ -28,34 +28,32 @@ exports.remote = function(dest)
 
 exports.upload = function(req, res, next)
 {
-	if (req.body.type == 'video'){
-		req.video = { 'url' : req.body.url, 'preview' : req.body.preview };
-		next();
-	}	else {
-		var busboy = new Busboy({ headers: req.headers });
-		busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
-			req.image = { name : getFileName(filename), type : getFileType(filename) };
-			var fstream = fs.createWriteStream(opts.local + '/' + req.image.name + req.image.type);
-			file.pipe(fstream);
-		});
-		var tdata;
-		busboy.on('field', function(key, value, fieldnameTruncated, valTruncated, encoding, mimetype) {
-			if (key == 'thumb' && value != '') {
-				tdata = JSON.parse(value);
-			}	else if (key == 'caption' && value != '') {
-				//image.caption = value;
-			}
-		});
-		busboy.on('finish', function() {
-			log('file received');
-			if (tdata == undefined){
+	var busboy = new Busboy({ headers: req.headers });
+	busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
+		req.image = { name : getFileName(filename), type : getFileType(filename) };
+		var fstream = fs.createWriteStream(opts.local + '/' + req.image.name + req.image.type);
+		file.pipe(fstream);
+	});
+	var fields = {};
+	busboy.on('field', function(key, value, fieldnameTruncated, valTruncated, encoding, mimetype) {
+		fields[key] = value;
+	});
+	busboy.on('finish', function() {
+		log('file received');
+	//	for(k in fields) console.log('field ––', k, fields[k]);
+		if (fields.type == 'video'){
+			req.video = { 'url' : fields.url, 'preview' : fields.preview };
+			next();
+			return;
+		}	else if (fields.type == 'image'){
+			if (fields.thumb == undefined){
 				if (gCloud == undefined){
 					next();	
 				}	else{
 					saveToGoogleCloud(req, next);
 				}
 			}	else{
-				saveThumb(tdata, req, function(){
+				saveThumb(JSON.parse(fields.thumb), req, function(){
 					if (gCloud == undefined){
 						next();	
 					}	else{
@@ -63,9 +61,9 @@ exports.upload = function(req, res, next)
 					}
 				})
 			}
-		});
-		req.pipe(busboy);
-	}
+		}
+	});
+	req.pipe(busboy);
 }
 
 var saveThumb = function(tdata, req, cback)
