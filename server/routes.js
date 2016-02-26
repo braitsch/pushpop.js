@@ -8,6 +8,8 @@ iu.settings({
 
 iu.gcloud('node-upload', 'my-project');
 
+var mongo = require('./mongo');
+
 module.exports = function(app) {
 
 	app.get('/', function (req, res)
