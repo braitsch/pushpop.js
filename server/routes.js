@@ -19,28 +19,29 @@ module.exports = function(app) {
 		})
 	});
 
-	app.post('/gallery/add', iu.upload, function(req, res)
-	{
-		if (iu.error){
-			res.send(iu.error).status(400);
-		}	else{
-			console.log('image = ', req.image);
-			console.log('video = ', req.video);
-			res.send('ok').status(200);
-		}
-	});
-
-	app.post('/gallery/sort', function(req, res)
-	{
-
-
-	});
-
-	app.post('/gallery/delete', function(req, res)
-	{
-		iu.delete(req, function(result){
-
+	app.get('/wipe', function(req, res){
+		iu.wipe(function(){
+			mongo.wipe(function(){
+				res.redirect('/');
+			});
 		});
+	});
+
+	app.get('/print', function(req, res){
+		mongo.get(function(files){
+			res.send(files);
+		})
+	});
+
+	app.post('/upload', iu.upload, function(req, res)
+	{
+		if (iu.error || !req.media){
+			res.send(iu.error).status(500);
+		}	else{
+			mongo.add(req.media, function(){
+				res.send('ok').status(200);
+			});
+		}
 	});
 
 };

@@ -48,8 +48,9 @@
 						button(type="button").btn.btn-success.btn-select Select
 						button(type="submit").btn.btn-primary.btn-upload Upload
 				#video
-					input.media-input.form-control
-					button(type="button").btn.btn-success.btn-save-video Save
+					form(method="post" enctype="multipart/form-data")
+						input.media-input.form-control
+						button(type="submit").btn.btn-success.btn-save-video Save
 
 
 

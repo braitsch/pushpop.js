@@ -11,6 +11,9 @@ var dbName = process.env.DB_NAME || 'modal-upload';
 var dbHost = process.env.DB_HOST || 'localhost'
 var dbPort = process.env.DB_PORT || 27017;
 
+//mongodb://dbuser:dbpass@host:port/dbname
+//mongodb://heroku_23fhp12j:5q3uek3jnn2j4omg8kqreg6ut4@ds017258.mlab.com:17258/heroku_23fhp12j
+
 var db = new MongoDB(dbName, new Server(dbHost, dbPort, {auto_reconnect: true}), {w: 1});
 var items = db.collection('items');
 
@@ -34,16 +37,18 @@ exports.get = function(cback)
 	});
 }
 
-exports.add = function(cback)
+exports.add = function(media, cback)
 {
-	var o = {};
-	items.insert(o, { safe:true }, function(e, response){
-
-	});
+	media.date = new Date();
+	console.log('-------saving-------');
+	console.log(media);
+	console.log('--------------------');
+	items.insert(media, { safe:true }, cback);
 }
 
 exports.wipe = function(cback)
 {
+	console.log('wiping mongodb');
 	items.remove({}, cback);
 }
 

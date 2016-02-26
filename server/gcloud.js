@@ -30,7 +30,10 @@ var gcloud = function(bucketName)
 			}
 		}
 	});
-
+	this.getURL = function()
+	{
+		return gcloudURL;
+	}
 	this.listFiles = function(path, cback)
 	{
 		bucket.getFiles({ prefix:path }, function(e, files) {
@@ -55,17 +58,13 @@ var gcloud = function(bucketName)
 			}
 		});
 	}
-	this.uploadImage = function(file, destination, cback)
+	this.upload = function(file, destination, cback)
 	{
 		bucket.upload(file, { destination: bucket.file(destination) }, cback);
 	}
-	this.deleteImage = function(file, cback)
+	this.delete = function(path, cback)
 	{
-		bucket.deleteFiles({ prefix: file }, cback);
-	}
-	this.deleteProject = function(project_id, cback)
-	{
-		bucket.deleteFiles({ prefix: project_id }, cback);
+		bucket.deleteFiles({ prefix: path }, cback);
 	}
 }
 

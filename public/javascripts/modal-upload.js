@@ -1,7 +1,7 @@
 $(function() {
 
 // where should we sent the data? //
-	var endpoint = '/gallery/add';
+	var endpoint = '/upload';
 // default thumbnail generator settings //
 	var thumb = {
 		mode:'normal',
@@ -10,7 +10,8 @@ $(function() {
 	};
 
 	var initMediaUploader = function(){
-		var form = $('.modal-upload form');
+		var imageForm = $('.modal-upload #image form');
+		var videoForm = $('.modal-upload #video form');
 		var mediaPreview = $('.modal-upload .media-preview img');
 		var videoPreview = $('.modal-upload .media-preview iframe');
 		var fileDialog = $('.modal-upload .file-dialog');
@@ -72,7 +73,7 @@ $(function() {
 			}
 		});
 	// setup the form to handle the image upload //
-		form.ajaxForm({
+		imageForm.ajaxForm({
 			url: endpoint,
 			beforeSubmit: function(formData, jqForm, options) {
 			// append any thumbnail data to the form //
@@ -134,11 +135,21 @@ $(function() {
 					});
 				}
 		}, 1)});
-		saveVideoButton.click(function(){
-			$.post( endpoint, { type:'video', url:video.url, preview:video.preview}, function(response){
-				if ($('.modal').length) closeModalAndReloadPage();
-			})
+	// setup the form to send the video details //
+		videoForm.ajaxForm({
+			url: endpoint,
+			beforeSubmit: function(formData, jqForm, options) {
+				console.log('sending');
+				formData.push({name:'type', value:'video'});
+				formData.push({name:'url', value:video.url});
+				formData.push({name:'preview', value:video.preview});
+				return true;
+			},
+			complete: function(xhr) {
+				setTimeout(closeModalAndReloadPage, 500);
+			}
 		});
+
 		var closeModalAndReloadPage = function()
 		{
 			$('.modal-upload').modal('hide');
