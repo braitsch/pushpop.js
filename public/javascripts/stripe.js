@@ -1,7 +1,7 @@
 
 $(function() {
 
-	var amount = 500;
+	var amount = 100;
 	var details = 'open source donation';
 // initialize stripe checkout //
 	var handler = StripeCheckout.configure({
