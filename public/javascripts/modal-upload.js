@@ -1,35 +1,27 @@
 $(function() {
 
-// turn on images after grid layout has initialized //
-	$('#grid img').each(function(){
-		$(this).show();
-		$(this).click(function(){
-			var url = $(this).prop('src').replace('_thumb', '');
-			window.open(url, '_blank');
-		});
-	});
-
-	var endpoint = '/gallery';
+// where should we sent the data? //
+	var endpoint = '/gallery/add';
+// default thumbnail generator settings //
 	var thumb = {
 		mode:'normal',
 		width:100, height:100,
-		ratio:{ width:16, height:9},
-		crop:{ x:0, y:0, w:0, h:0 }
+		ratio:{ width:16, height:9}
 	};
 
-	var initMediaUploader = function(endpoint){
-		var form = $('.modal-uploader form');
-		var mediaPreview = $('.modal-uploader .media-preview img');
-		var videoPreview = $('.modal-uploader .media-preview iframe');
-		var fileDialog = $('.modal-uploader .file-dialog');
-		var progressbar = $('.modal-uploader .progress');
-		var thumbSettings = $('.modal-uploader .thumb-settings');
-		var mediaDropdown = $('.modal-uploader .media-dropdown');
-		var imageInput = $('.modal-uploader #image .media-input');
-		var videoInput = $('.modal-uploader #video .media-input');
-		var selectButton = $('.modal-uploader .btn-select');
-		var uploadButton = $('.modal-uploader .btn-upload');
-		var saveVideoButton = $('.modal-uploader .btn-save-video');
+	var initMediaUploader = function(){
+		var form = $('.modal-upload form');
+		var mediaPreview = $('.modal-upload .media-preview img');
+		var videoPreview = $('.modal-upload .media-preview iframe');
+		var fileDialog = $('.modal-upload .file-dialog');
+		var progressbar = $('.modal-upload .progress');
+		var thumbSettings = $('.modal-upload .thumb-settings');
+		var mediaDropdown = $('.modal-upload .media-dropdown');
+		var imageInput = $('.modal-upload #image .media-input');
+		var videoInput = $('.modal-upload #video .media-input');
+		var selectButton = $('.modal-upload .btn-select');
+		var uploadButton = $('.modal-upload .btn-upload');
+		var saveVideoButton = $('.modal-upload .btn-save-video');
 
 		var image = {
 			width:0,
@@ -81,7 +73,7 @@ $(function() {
 		});
 	// setup the form to handle the image upload //
 		form.ajaxForm({
-			url: endpoint +'/add',
+			url: endpoint,
 			beforeSubmit: function(formData, jqForm, options) {
 			// append any thumbnail data to the form //
 				if ($thumb.width() > 0 || $thumb.height() > 0){
@@ -143,14 +135,14 @@ $(function() {
 				}
 		}, 1)});
 		saveVideoButton.click(function(){
-			$.post( endpoint + '/add', { type:'video', url:video.url, preview:video.preview}, function(response){
+			$.post( endpoint, { type:'video', url:video.url, preview:video.preview}, function(response){
 				if ($('.modal').length) closeModalAndReloadPage();
 			})
 		});
 		var closeModalAndReloadPage = function()
 		{
-			$('.modal-uploader').modal('hide');
-			$('.modal-uploader').on('hidden.bs.modal', function (e) { location.reload(true); });
+			$('.modal-upload').modal('hide');
+			$('.modal-upload').on('hidden.bs.modal', function (e) { location.reload(true); });
 		}
 
 		/*
@@ -223,14 +215,11 @@ $(function() {
 		var $container = $('.media-preview');
 		$thumb.hide();
 		$image.on('dragstart', function(e) { e.preventDefault(); });
-		var mouseOffset = parseInt($('.modal-body').css('padding')) + parseInt($('.modal-uploader .well').css('padding'));
+		var mouseOffset = parseInt($('.modal-body').css('padding')) + parseInt($('.modal-upload .well').css('padding'));
 		var clearThumbnail = function()
 		{
 			$thumb.hide();
-			thumb.crop.x = 0;
-			thumb.crop.y = 0;
-			thumb.crop.w = 0;
-			thumb.crop.h = 0;
+			thumb.crop = { };
 		//	$('#caption input').val('');
 		}
 		var getMousePosition = function(e)
@@ -255,6 +244,7 @@ $(function() {
 		var onMouseDown = function(e)
 		{
 			var mouse = getMousePosition(e);
+			thumb.crop = { };
 			thumb.crop.x = mouse.x;
 			thumb.crop.y = mouse.y;
 			$thumb.css({
@@ -299,23 +289,7 @@ $(function() {
 		}, false);
 	}
 
-	/*
-		gallery page layout
-	*/
-
-	var initMediaPageLayout = function(endpoint)
-	{
-		initMediaUploader(endpoint);
-		$('.show-modal').click(function(){ $('.modal-uploader').modal('show'); });
-	// add delete handler //
-		$('.media a').on('click', function(e) {
-			e.preventDefault();
-			e.stopImmediatePropagation();
-			$.post( endpoint + '/delete', {type:$(this).data('type'), url:$(this).data('url')}, function(response){ location.reload(true); });
-		});
-	}
-
-	initMediaPageLayout(endpoint);
+	initMediaUploader();
 
 });
 
