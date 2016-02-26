@@ -5,7 +5,8 @@ $(function() {
 	var details = 'open source donation';
 // initialize stripe checkout //
 	var handler = StripeCheckout.configure({
-		key: 'pk_test_qwrb8GsCjfgqxKOKErYzi66E',
+//		key: 'pk_test_qwrb8GsCjfgqxKOKErYzi66E',
+		key: 'pk_live_cNYVmlUIqGkmrqi0coGmrIkt',
 		image: '/img/world-series.jpg',
 		locale: 'auto',
 		panelLabel: 'Donate {{amount}}',

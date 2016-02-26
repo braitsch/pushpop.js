@@ -1,5 +1,11 @@
 
-var stripe = require("stripe")(process.env.STRIPE_KEY);
+
+var stripe;
+if (process.env.NODE_ENV == 'live'){
+	stripe = require("stripe")(process.env.STRIPE_KEY_LIVE);
+}	else{
+	stripe = require("stripe")(process.env.STRIPE_KEY_TEST);
+}
 
 module.exports = function(app) {
 
