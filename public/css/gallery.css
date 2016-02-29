@@ -5,11 +5,22 @@
   width: 100px;
   margin: 10px 0 0 5px; }
 
+#gallery {
+  padding-right: 0;
+  top: 60px;
+  position: relative; }
+  #gallery .dropdown {
+    right: 0;
+    position: absolute; }
+  #gallery .open-modal-push {
+    right: 132px;
+    position: absolute; }
+
 /*
 	gallery
 */
 #grid {
-  margin-top: 80px; }
+  margin-top: 46px; }
   #grid .column {
     float: left; }
   #grid .size-1of5 {

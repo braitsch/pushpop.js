@@ -9,7 +9,7 @@ $(function() {
 		});
 	});
 
-	$('.show-modal').click(function(){ $('.modal-upload').modal('show'); });
+	$('.open-modal-push').click(function(){ $('.modal-upload').modal('show'); });
 // add delete handler //
 	// $('.media a').on('click', function(e) {
 	// 	e.preventDefault();

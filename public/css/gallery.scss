@@ -10,6 +10,21 @@
 	}
 }
 
+#gallery{
+	padding-right:0;
+	top:60px;
+	position:relative;
+	.dropdown{
+		right:0;
+		position:absolute;
+	}
+	.open-modal-push{
+		right:132px;
+		position:absolute;
+	}
+}
+
+
 /*
 	gallery
 */
@@ -39,7 +54,7 @@
 			background-color:#fff;
 		}
 	}
-	margin-top: 80px;
+	margin-top:46px;
 }
 
 #grid[data-columns]::before {

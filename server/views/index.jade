@@ -5,25 +5,25 @@ block content
 	nav.navbar.navbar-default.navbar-fixed-top
 		.container
 			.navbar-header
-				a.navbar-brand(href='/admin/projects') Node Uploader
+				a.navbar-brand(href='/admin/projects') pushpop.js
 			ul.nav.navbar-nav.navbar-right
-				li.dropdown
-					.btn.btn-default(data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style='width:160px;').dropdown-toggle Select Project
-						<span class="caret"></span>
-					ul.dropdown-menu
-						li
-							a(href='/project/one') one
-						li
-							a(href='/project/two') two
-						li
-							a(href='/project/three') three
 				li
 					.btn.btn-default Source
 				li
-					.btn.btn-default.show-modal Add Media
-				li
 					#donate-btn.btn.btn-default Donate
-	.container
+	#gallery.container
+		.nav
+			.dropdown
+				.btn.btn-default(data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false").dropdown-toggle Select Project
+					<span class="caret"></span>
+				ul.dropdown-menu
+					li
+						a(href='/project/one') one
+					li
+						a(href='/project/two') two
+					li
+						a(href='/project/three') three
+			.btn.btn-default.open-modal-push Push Media
 		#grid(data-columns)
 			- for (var i=0; i<files.length; i++) {
 				.wrap
