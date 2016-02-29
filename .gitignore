@@ -3,4 +3,4 @@ node_modules
 uploads/*
 !uploads/.gitkeep
 public/css/.sass-cache/
-public/css/cms.css.map
+public/css/*.map

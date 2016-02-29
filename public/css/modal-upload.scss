@@ -1,57 +1,5 @@
 
 /*
-	navigation
-*/
-
-.navbar{
-	.btn{
-		width: 100px;
-		margin:10px 0 0 5px;
-	}
-}
-
-/*
-	gallery
-*/
-
-#grid{
-	.column { 
-		float: left; 
-	}
-	.size-1of5 {
-		width: 20%;
-	}
-	.wrap{
-		padding:0;
-		margin-left:1px;
-		margin-bottom:1px;
-		border-style:solid;
-		border-color:#ccc;
-		border-width: 1px;
-		.item{
-			padding:10px;
-			img{
-				width:100%;
-			}
-		}
-		.item:hover{
-			border-color:#fff;
-			background-color:#fff;
-		}
-	}
-	margin-top: 80px;
-}
-
-#grid[data-columns]::before {
-	content: '5 .column.size-1of5';
-}
-
-#footer{
-	clear:both;
-	height:80px;
-}
-
-/*
 	modal uploader 
 */
 
