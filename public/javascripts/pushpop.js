@@ -125,7 +125,7 @@ $(function() {
 					video.id = video.url.substring(video.url.lastIndexOf("?v=") + 3);
 					video.url = 'https://www.youtube.com/embed/' + video.id;
 					videoPreview.attr('src', video.url)
-					video.preview = 'https://img.youtube.com/vi/'+video.id+'/maxresdefault.jpg';
+					video.preview = 'https://img.youtube.com/vi/'+video.id+'/hqdefault.jpg';
 				}	else if (video.url.search('vimeo')!= -1){
 					video.id = video.url.substring(video.url.lastIndexOf("/") + 1);
 					video.url = 'https://player.vimeo.com/video/' + video.id;

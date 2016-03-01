@@ -1,55 +1,61 @@
 
-var iu = require('./upload');
-iu.settings({
+var pushpop = require('./pushpop');
+pushpop.settings({
+// overwrite file names with unique ids //
 	'guid' : true,
+// enable verbose logging //
 	'verbose' : true,
+// local upload directory is relative to project root //
 	'local' : 'uploads'
 });
 
-iu.gcloud('node-upload', 'my-project');
-
-var activeProject;
-var mongo = require('./mongo');
+// save files to gcloud instead of the local filesystem //
+//pushpop.use('gcloud', 'pushpop');
 
 module.exports = function(app) {
 
 	app.get('/', function (req, res)
 	{	
-		iu.listFiles(function(files){
-			res.render('index', { files : files });
-		})
+		res.redirect('/project/one');
 	});
 
-	app.get('/project/:id', function(req, res){
-		activeProject = req.params['id'];
-		iu.listFiles(function(files){
-			res.render('index', { files : files });
-		})
+	app.get('/project/:id', function(req, res)
+	{
+		pushpop.set(req.params['id'], function(project){
+			res.render('index', { project : project });
+		});
 	});	
 
-	app.get('/wipe', function(req, res){
-		iu.wipe(function(){
-			mongo.wipe(function(){
-				res.redirect('/');
-			});
-		});
+	app.get('/project/:id/print', function(req, res){
+		pushpop.get(req.params['id'], function(project){
+			res.send({ project : project });
+		})
 	});
 
 	app.get('/print', function(req, res){
-		mongo.get(function(files){
-			res.send(files);
+		pushpop.getAll(function(projects){
+			res.send({ projects : projects });
 		})
 	});
 
-	app.post('/upload', iu.upload, function(req, res)
+	app.get('/reset', function(req, res){
+		pushpop.reset(function(){
+			res.redirect('/');
+		});
+	});
+
+	app.get('*', function(req, res){
+		res.redirect('/');
+	});
+
+	app.post('/upload', pushpop.upload, function(req, res)
 	{
-		if (iu.error || !req.media){
-			res.send(iu.error).status(500);
+		if (pushpop.error || !req.media){
+			res.send(pushpop.error).status(500);
 		}	else{
-			mongo.add(req.media, function(){
-				res.send('ok').status(200);
-			});
+			res.send('ok').status(200);
 		}
 	});
 
 };
+

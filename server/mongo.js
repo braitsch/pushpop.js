@@ -7,15 +7,12 @@ var BSON		= require('mongodb').BSONPure;
 	ESTABLISH DATABASE
 */
 
-var dbName = process.env.DB_NAME || 'modal-upload';
+var dbName = process.env.DB_NAME || 'pushpop';
 var dbHost = process.env.DB_HOST || 'localhost'
 var dbPort = process.env.DB_PORT || 27017;
 
-//mongodb://dbuser:dbpass@host:port/dbname
-//mongodb://heroku_23fhp12j:5q3uek3jnn2j4omg8kqreg6ut4@ds017258.mlab.com:17258/heroku_23fhp12j
-
 var db = new MongoDB(dbName, new Server(dbHost, dbPort, {auto_reconnect: true}), {w: 1});
-var items = db.collection('items');
+var collection = db.collection('media');
 
 db.open(function(e, d){
 	if (e) {
@@ -25,30 +22,54 @@ db.open(function(e, d){
 	}
 });
 
-
 /*
 	public methods
 */
 
-exports.get = function(cback)
+exports.getAllProjects = function(cback)
 {
-	items.find( { } ).sort({'date':-1,'name':1}).toArray(function(e, a) {
+	collection.find({ }).sort({'date':-1,'name':1}).toArray(function(e, a) {
 		cback(a);
 	});
 }
 
-exports.add = function(media, cback)
+exports.addMediaToProject = function(pName, media, next)
 {
-	media.date = new Date();
-	console.log('-------saving-------');
-	console.log(media);
-	console.log('--------------------');
-	items.insert(media, { safe:true }, cback);
+	var project = getProjectByName(pName, function(project){
+		project.media.push(media);
+		project.last_updated = new Date();
+		collection.save(project, { safe:true }, next);
+	})
 }
 
 exports.wipe = function(cback)
 {
-	console.log('wiping mongodb');
-	items.remove({}, cback);
+	collection.remove({}, cback);
 }
+
+var getNewProjectObject = function(pName)
+{
+	return {
+		name : pName,
+		media : [],
+		last_updated : new Date() 
+	}
+}
+
+var getProjectByName = function(pName, cback)
+{
+// get the requested project if it exists //
+	collection.findOne({ name:pName }, function(e, project){
+		if (project){
+			cback(project);
+		}	else{
+			var project = getNewProjectObject(pName);
+			collection.insert(project, { safe:true }, function(e, result){
+				cback(project);
+			});
+		}
+	});
+}
+
+exports.getProjectByName = getProjectByName;
 
