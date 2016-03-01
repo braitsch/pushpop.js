@@ -10,7 +10,7 @@ pushpop.settings({
 });
 
 // save files to gcloud instead of the local filesystem //
-//pushpop.use('gcloud', 'pushpop');
+pushpop.use('gcloud', 'pushpop');
 
 module.exports = function(app) {
 

@@ -1,7 +1,6 @@
 
 var MongoDB		= require('mongodb').Db;
 var Server		= require('mongodb').Server;
-var BSON		= require('mongodb').BSONPure;
 
 /*
 	ESTABLISH DATABASE
@@ -49,15 +48,8 @@ exports.addMediaToProject = function(pName, media, next)
 	var project = getProjectByName(pName, function(project){
 		project.media.push(media);
 		project.last_updated = new Date();
-		collection.save(project, { safe:true }, function(e, response){
-			if (e){
-				console.log('error', e);
-			}	else{
-				console.log('result', response);
-				next();
-			}
-		});
-	})
+		collection.save(project, { safe:true }, next);
+	});
 }
 
 exports.wipe = function(cback)
