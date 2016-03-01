@@ -18,7 +18,18 @@ db.open(function(e, d){
 	if (e) {
 		console.log(e);
 	} else {
-		console.log('connected to database ::', dbName);
+		if (process.env.NODE_ENV == 'live') {
+			db.authenticate(process.env.DB_USER, process.env.DB_PASS, function(e, res) {
+				if (e) {
+					console.log('error: not authenticated', e);
+				}
+				else {
+					console.log('authenticated and connected to database :: ' + dbName);
+				}
+			});
+		}	else{
+			console.log('connected to database :: ' + dbName);
+		}
 	}
 });
 
@@ -38,7 +49,14 @@ exports.addMediaToProject = function(pName, media, next)
 	var project = getProjectByName(pName, function(project){
 		project.media.push(media);
 		project.last_updated = new Date();
-		collection.save(project, { safe:true }, next);
+		collection.save(project, { safe:true }, function(e, response){
+			if (e){
+				console.log('error', e);
+			}	else{
+				console.log('result', response);
+				next();
+			}
+		});
 	})
 }
 

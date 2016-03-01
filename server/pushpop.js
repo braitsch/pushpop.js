@@ -19,10 +19,7 @@ exports.settings = function(obj)
 {
 	opts = obj;
 	opts.local = path.join(__dirname, '..', obj.local);
-	if (!fs.existsSync(opts.local)) {
-		log('creating directory', opts.local);
-		fs.mkdirSync(opts.local);
-	}
+	if (!fs.existsSync(opts.local)) mkdir(opts.local);
 }
 
 exports.set = function(pName, cback)
@@ -30,11 +27,8 @@ exports.set = function(pName, cback)
 	opts.pName = pName;
 // update the local upload destination //
 	opts.pdir = opts.local + '/' + opts.pName;
-// and always ensure it actually exists //
-	if (!fs.existsSync(opts.pdir)) {
-		log('creating directory', opts.pdir);
-		fs.mkdirSync(opts.pdir);
-	}
+// and always ensure it exists before we attempt to write to it //
+	if (!fs.existsSync(opts.pdir)) mkdir(opts.pdir);
 // get the requested project from the database //
 	db.getProjectByName(pName, cback);
 }
@@ -192,6 +186,11 @@ var getFileName = function(name)
 var getFileType = function(name)
 {
 	return name.substr(name.lastIndexOf('.'));
+}
+
+var mkdir = function(dir)
+{
+	log('creating directory', dir); fs.mkdirSync(dir);
 }
 
 var log = function()
