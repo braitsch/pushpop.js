@@ -1,3 +1,4 @@
+
 $(function() {
 
 // where should we sent the data? //
@@ -9,20 +10,20 @@ $(function() {
 		ratio:{ width:16, height:9}
 	};
 
-	var initMediaUploader = function(){
-		var imageForm = $('.modal-upload #image form');
-		var videoForm = $('.modal-upload #video form');
-		var mediaPreview = $('.modal-upload .media-preview img');
-		var videoPreview = $('.modal-upload .media-preview iframe');
-		var fileDialog = $('.modal-upload .file-dialog');
-		var progressbar = $('.modal-upload .progress');
-		var thumbSettings = $('.modal-upload .thumb-settings');
-		var mediaDropdown = $('.modal-upload .media-dropdown');
-		var imageInput = $('.modal-upload #image .media-input');
-		var videoInput = $('.modal-upload #video .media-input');
-		var selectButton = $('.modal-upload .btn-select');
-		var uploadButton = $('.modal-upload .btn-upload');
-		var saveVideoButton = $('.modal-upload .btn-save-video');
+	var initModalPush = function(){
+		var imageForm = $('.modal-push #image form');
+		var videoForm = $('.modal-push #video form');
+		var mediaPreview = $('.modal-push .media-preview img');
+		var videoPreview = $('.modal-push .media-preview iframe');
+		var fileDialog = $('.modal-push .file-dialog');
+		var progressbar = $('.modal-push .progress');
+		var thumbSettings = $('.modal-push .thumb-settings');
+		var mediaDropdown = $('.modal-push .media-dropdown');
+		var imageInput = $('.modal-push #image .media-input');
+		var videoInput = $('.modal-push #video .media-input');
+		var selectButton = $('.modal-push .btn-select');
+		var uploadButton = $('.modal-push .btn-upload');
+		var saveVideoButton = $('.modal-push .btn-save-video');
 
 		var image = {
 			width:0,
@@ -152,8 +153,8 @@ $(function() {
 
 		var closeModalAndReloadPage = function()
 		{
-			$('.modal-upload').modal('hide');
-			$('.modal-upload').on('hidden.bs.modal', function (e) { location.reload(true); });
+			$('.modal-push').modal('hide');
+			$('.modal-push').on('hidden.bs.modal', function (e) { location.reload(true); });
 		}
 
 		/*
@@ -226,7 +227,7 @@ $(function() {
 		var $container = $('.media-preview');
 		$thumb.hide();
 		$image.on('dragstart', function(e) { e.preventDefault(); });
-		var mouseOffset = parseInt($('.modal-body').css('padding')) + parseInt($('.modal-upload .well').css('padding'));
+		var mouseOffset = parseInt($('.modal-body').css('padding')) + parseInt($('.modal-push .well').css('padding'));
 		var clearThumbnail = function()
 		{
 			$thumb.hide();
@@ -300,7 +301,16 @@ $(function() {
 		}, false);
 	}
 
-	initMediaUploader();
+	if ($('.modal-push')){
+		initModalPush();
+	}	else{
+		console.log('modal-push not found');
+	}
+	
+	$('.modal-pop').on('hidden.bs.modal', function(e){
+		$('.modal-pop .media-preview img').attr('src', '');
+		$('.modal-pop .media-preview iframe').attr('src', '');
+	})
 
 });
 

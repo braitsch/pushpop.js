@@ -1,0 +1,16 @@
+
+.modal.fade.modal-pop
+	.modal-dialog
+		.modal-content
+			.modal-header
+				button.close(type='button', data-dismiss='modal', aria-label='Close')
+					span(aria-hidden='true') ×
+				h4.modal-title View Asset
+			.modal-body
+				.well
+					.media-preview
+						img
+						iframe(frameborder='0', webkitAllowFullScreen, mozallowfullscreen, allowFullScreen)
+			.modal-footer
+				button(type='button', data-dismiss='modal', aria-label='Cancel').btn.btn-default.btn-select Cancel
+				button(type='submit').btn.btn-danger.btn-upload Delete

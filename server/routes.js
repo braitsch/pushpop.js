@@ -22,7 +22,7 @@ module.exports = function(app) {
 	app.get('/project/:id', function(req, res)
 	{
 		pushpop.set(req.params['id'], function(project){
-			res.render('index', { project : project });
+			res.render('gallery', { project : project });
 		});
 	});	
 

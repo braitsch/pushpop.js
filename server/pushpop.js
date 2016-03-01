@@ -112,7 +112,8 @@ exports.reset = function(cback)
 					if (fs.statSync(filePath).isFile()){
 						fs.unlinkSync(filePath);
 					}	else{
-						exec('rm -rf' + filePath, function ( err, stdout, stderr ){ });
+						log(filePath);
+						exec('rm -rf '+filePath, function ( err, stdout, stderr ){ });
 					}
 				}
 			}
