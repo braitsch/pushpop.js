@@ -27,14 +27,8 @@ block content
 		#grid(data-columns)
 			- for (var i=0; i<project.media.length; i++) {
 				.wrap
-					- var media = project.media[i];
-						.item(data-type=media.type)
-							- if (media.type == 'image'){
-								- var url = media.host + '/' + project.name + '/' + media.name + '_thumb' + media.ext;
-									img(src=url style='display:none')
-							- }	else if (media.type == 'video'){
-									img(src=media.preview data-url=media.url style='display:none')
-							- }
+					.item(data-pname=project.name, data-media=project.media[i], style='display:none')
+						img
 			- }
 		#footer
 	include modal-donate

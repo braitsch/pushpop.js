@@ -1,5 +1,4 @@
 
-
 var gcloud = function(bucketName)
 {
 	var gcloud;
@@ -34,30 +33,6 @@ var gcloud = function(bucketName)
 	{
 		return gcloudURL;
 	}
-	// this.listFiles = function(path, cback)
-	// {
-	// 	bucket.getFiles({ prefix:path }, function(e, files) {
-	// 		if (e) {
-	// 			console.log(e);
-	// 		}	else{
-	// 			var a = [];
-	// 			for (var i=0; i<files.length; i++){
-	// 			// ignore empty directories & thumbnails //
-	// 				if (files[i].metadata.size != 0 && files[i].name.search('_thumb') != -1){
-	// 					a.push({
-	// 						'name' : files[i].name,
-	// 						'date' : files[i].metadata.updated,
-	// 						'size' : (files[i].metadata.size/1024/1024).toFixed(2) + 'MB',
-	// 						'path' : gcloudURL +'/'+ bucketName +'/'+ files[i].name,
-	// 					});
-	// 				}
-	// 			};
-	// 		// return list of files sorted by date descending //
-	// 			a.sort(function(a,b){ return new Date(b.date) - new Date(a.date); });
-	// 			cback(a);
-	// 		}
-	// 	});
-	// }
 	this.upload = function(file, destination, cback)
 	{
 		bucket.upload(file, { destination: bucket.file(destination) }, cback);
@@ -65,6 +40,30 @@ var gcloud = function(bucketName)
 	this.delete = function(path, cback)
 	{
 		bucket.deleteFiles({ prefix: path }, cback);
+	}
+	this.listFiles = function(path, cback)
+	{
+		bucket.getFiles({ prefix:path }, function(e, files) {
+			if (e) {
+				console.log(e);
+			}	else{
+				var a = [];
+				for (var i=0; i<files.length; i++){
+				// ignore empty directories & thumbnails //
+					if (files[i].metadata.size != 0 && files[i].name.search('_thumb') != -1){
+						a.push({
+							'name' : files[i].name,
+							'date' : files[i].metadata.updated,
+							'size' : (files[i].metadata.size/1024/1024).toFixed(2) + 'MB',
+							'path' : gcloudURL +'/'+ bucketName +'/'+ files[i].name,
+						});
+					}
+				};
+			// return list of files sorted by date descending //
+				a.sort(function(a,b){ return new Date(b.date) - new Date(a.date); });
+				cback(a);
+			}
+		});
 	}
 }
 

@@ -30,17 +30,17 @@ exports.set = function(pName, cback)
 // and always ensure it exists before we attempt to write to it //
 	if (!fs.existsSync(opts.pdir)) mkdir(opts.pdir);
 // get the requested project from the database //
-	db.getProjectByName(pName, cback);
+	db.get(pName, cback);
 }
 
 exports.get = function(pName, cback)
 {
-	db.getProjectByName(pName, cback);
+	db.get(pName, cback);
 }
 
 exports.getAll = function(cback)
 {
-	db.getAllProjects(cback);
+	db.getAll(cback);
 }
 
 exports.use = function(service, bucket)
@@ -69,24 +69,24 @@ exports.upload = function(req, res, next)
 		fields[key] = value;
 	});
 	busboy.on('finish', function() {
-		log('file received');
+		log('data received');
 		if (fields.type == 'video'){
 			req.media.type = 'video';
 			req.media.url = fields.url;
 			req.media.preview = fields.preview;
-			saveToDatabase(req, next);
+			addMediaToProject(req, next);
 			return;
 		}	else if (fields.type == 'image'){
 			if (fields.thumb == undefined){
 				if (gCloud == undefined){
-					saveToDatabase(req, next);
+					addMediaToProject(req, next);
 				}	else{
 					saveToGoogleCloud(req, next);
 				}
 			}	else{
 				saveThumb(JSON.parse(fields.thumb), req, function(){
 					if (gCloud == undefined){
-						saveToDatabase(req, next);
+						addMediaToProject(req, next);
 					}	else{
 						saveToGoogleCloud(req, next);
 					}
@@ -97,10 +97,24 @@ exports.upload = function(req, res, next)
 	req.pipe(busboy);
 }
 
+exports.delete = function(req, res, next)
+{
+	var busboy = new Busboy({ headers: req.headers });
+	var fields = {};
+	busboy.on('field', function(key, value, fieldnameTruncated, valTruncated, encoding, mimetype) {
+		fields[key] = value;
+	});
+	busboy.on('finish', function() {
+		log('data received');
+		delMediaFromProject(fields.pname, fields.index, next);
+	});
+	req.pipe(busboy);
+}
+
 exports.reset = function(cback)
 {
 	log('wiping datastore');
-	db.wipe(function(){
+	db.reset(function(){
 		if (gCloud){
 			log('wiping gcloud');
 			gCloud.delete(opts.pName, cback)
@@ -134,9 +148,22 @@ var saveThumb = function(tdata, req, cback)
 	img.write(opts.pdir + '/' + req.media.name + '_thumb'+ req.media.ext, cback);
 }
 
-var saveToDatabase = function(req, next)
+var addMediaToProject = function(req, next)
 {
-	db.addMediaToProject(opts.pName, req.media, next);
+	var project = db.get(opts.pName, function(project){
+		project.media.push(req.media);
+		project.last_updated = new Date();
+		db.save(project, next);
+	});
+}
+
+var delMediaFromProject = function(pName, index, next)
+{
+	db.get(pName, function(project){
+		project.media.splice(index, 1);
+		db.save(project, next);
+	// remove from gcloud / filesystem //
+	});
 }
 
 var saveToGoogleCloud = function(req, next)
@@ -148,21 +175,21 @@ var saveToGoogleCloud = function(req, next)
 	gCloud.upload(opts.pdir + '/' + large, opts.pName + '/' + large, function(e){
 		if (e){
 			log('error transferring file to gcloud', e);
-			saveToDatabase(req, next);
+			addMediaToProject(req, next);
 		}	else{
 			fs.unlinkSync(opts.pdir + '/' + large);
 			log('large file uploaded to gcloud');
 			if (fs.existsSync(opts.pdir + '/' + thumb) == false) {
-				saveToDatabase(req, next);
+				addMediaToProject(req, next);
 			}	else{
 				gCloud.upload(opts.pdir + '/' + thumb, opts.pName + '/' + thumb, function(e){
 					if (e){
 						log('error transferring file to gcloud', e);
-						saveToDatabase(req, next);
+						addMediaToProject(req, next);
 					}	else{
 						fs.unlinkSync(opts.pdir + '/' + thumb);
 						log('thumb file uploaded to gcloud');
-						saveToDatabase(req, next);
+						addMediaToProject(req, next);
 					}
 				});
 			}
@@ -199,43 +226,4 @@ var log = function()
 	for(p in arguments) str += arguments[p] + ' ';
 	if (opts.verbose) console.log('[ pushpop –– ' + str + ' ]');
 }
-
-// var getRemotePath = function(str)
-// {
-// 	if (!str) {
-// 		str = '';
-// 	}	else {
-// 	// trim off leading slash //
-// 		if (str.indexOf('/') == 0) {
-// 			str = str.substr(1);
-// 		}
-// 	// append trailing slash if missing //
-// 		if (str.lastIndexOf('/') != str.length - 1){
-// 			str += '/';
-// 		}
-// 	}
-// 	return str;
-// }
-
-// exports.listFiles = function(cback)
-// {
-// 	if (gCloud){
-// 		gCloud.listFiles(opts.remote, cback);
-// 	}	else{
-// 		var a = [];
-// 		fs.readdir(opts.local, function (e, files) {
-// 			if (e) {
-// 				log('error reading local upload directory');
-// 				cback(a);
-// 			}	else{
-// 				files.forEach(function (name) { 
-// 					if (name.indexOf('.') != 0 && name.search('_thumb') != -1) {
-// 						a.push({ path : name}); 
-// 					}
-// 				});
-// 				cback(a);
-// 			}
-// 		});
-// 	}
-// }
 

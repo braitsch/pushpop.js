@@ -1,6 +1,7 @@
 
 var MongoDB		= require('mongodb').Db;
 var Server		= require('mongodb').Server;
+var ObjectId 	= require('mongodb').ObjectID;
 
 /*
 	ESTABLISH DATABASE
@@ -36,24 +37,40 @@ db.open(function(e, d){
 	public methods
 */
 
-exports.getAllProjects = function(cback)
+exports.get = function(pName, cback)
 {
-	collection.find({ }).sort({'date':-1,'name':1}).toArray(function(e, a) {
-		cback(a);
+// get the requested project if it exists //
+	collection.findOne({ name:pName }, function(e, project){
+		if (project){
+			cback(project);
+		}	else{
+	// otherwise return a new empty project //
+			var project = getNewProjectObject(pName);
+			collection.insert(project, { safe:true }, function(e, result){
+				cback(project);
+			});
+		}
 	});
 }
 
-exports.addMediaToProject = function(pName, media, next)
+exports.getAll = function(cback)
 {
-	var project = getProjectByName(pName, function(project){
-		project.media.push(media);
-		project.last_updated = new Date();
-		collection.save(project, { safe:true }, next);
-	});
+	collection.find({ }).sort({'date':-1,'name':1}).toArray(function(e, a) { cback(a); });
 }
 
-exports.wipe = function(cback)
+exports.save = function(project, cback)
 {
+	collection.save(project, { safe:true }, cback);
+}
+
+exports.delete = function(project, cback)
+{
+	collection.remove({ _id:new ObjectId(project) }, cback);
+}
+
+exports.reset = function(cback)
+{
+// reset the collection //
 	collection.remove({}, cback);
 }
 
@@ -66,20 +83,6 @@ var getNewProjectObject = function(pName)
 	}
 }
 
-var getProjectByName = function(pName, cback)
-{
-// get the requested project if it exists //
-	collection.findOne({ name:pName }, function(e, project){
-		if (project){
-			cback(project);
-		}	else{
-			var project = getNewProjectObject(pName);
-			collection.insert(project, { safe:true }, function(e, result){
-				cback(project);
-			});
-		}
-	});
-}
 
-exports.getProjectByName = getProjectByName;
+
 

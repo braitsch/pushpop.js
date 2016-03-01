@@ -1,31 +1,30 @@
 
 $(function() {
 
-	var $modalPop = $('.modal-pop');
-	var $modalPush = $('.modal-push');
-	var $imagePreview = $('.modal-pop .media-preview img');
-	var $videoPreview = $('.modal-pop .media-preview iframe')
+	var pushpop = new PushPop();
 
-// turn on images after grid layout has initialized //
-	$('#grid img').each(function(){ $(this).show(); });
-
-// bind click handlers to display the push & pop modal windows //
-	$('#grid .item').on('click', function(e) {
-		$imagePreview.hide();
-		$videoPreview.hide();
-		if ($(this).data('type') == 'image'){
-			$imagePreview.show();
-		// get the full image url by slicing off the thumb suffix //
-			$imagePreview.attr('src', $(this).find('img').prop('src').replace('_thumb', ''));
-		}	else if ($(this).data('type') == 'video'){
-			$videoPreview.show();
-		// video url is appended to html element as a data attribute //
-			$videoPreview.attr('src', $(this).find('img').data('url'))
+	$('#grid .item').each(function(index){ 
+		$(this).data('index', index);
+	// attach the thumbnail/preview image //
+		var image = $(this).find('img');
+		var media = $(this).data('media');
+		var pName = $(this).data('pname');
+		if (media.type == 'image'){
+			var thumb = media.host + '/' + pName + '/' + media.name + '_thumb' + media.ext;
+			image.attr('src', thumb);
+	// store the url to the large image //
+			$(this).data('url', media.host + '/' + pName + '/' + media.name + media.ext);
+		}	else if (media.type == 'video'){
+			image.attr('src', media.preview);
+	// store the url to associated video file //
+			$(this).data('url', media.url);
 		}
-		$modalPop.modal('show');
-		e.preventDefault();
-		e.stopImmediatePropagation();
+	// show the thumbnail once it's loaded //
+		$(this).show();
+	// and bind a click handler to open the pop modal //
+		$(this).on('click', function(e) { pushpop.openPopModal(this) });
 	});
-	$('.open-modal-push').click(function(){ $modalPush.modal('show'); });
+
+	$('.open-modal-push').click(function(){ pushpop.openPushModal() });
 
 });

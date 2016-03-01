@@ -12,5 +12,6 @@
 						img
 						iframe(frameborder='0', webkitAllowFullScreen, mozallowfullscreen, allowFullScreen)
 			.modal-footer
-				button(type='button', data-dismiss='modal', aria-label='Cancel').btn.btn-default.btn-select Cancel
-				button(type='submit').btn.btn-danger.btn-upload Delete
+				form(method="post" enctype="multipart/form-data")
+					button(type='button', data-dismiss='modal', aria-label='Cancel').btn.btn-default Cancel
+					button(type='submit').btn.btn-danger Delete

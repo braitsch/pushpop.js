@@ -21,6 +21,7 @@ module.exports = function(app) {
 
 	app.get('/project/:id', function(req, res)
 	{
+	// set the active project //
 		pushpop.set(req.params['id'], function(project){
 			res.render('gallery', { project : project });
 		});
@@ -48,12 +49,21 @@ module.exports = function(app) {
 		res.redirect('/');
 	});
 
+	app.post('/delete', pushpop.delete, function(req, res)
+	{
+		if (!pushpop.error){
+			res.send('ok').status(200);
+		}	else{
+			res.send(pushpop.error).status(500);
+		}
+	});
+
 	app.post('/upload', pushpop.upload, function(req, res)
 	{
-		if (pushpop.error || !req.media){
-			res.send(pushpop.error).status(500);
-		}	else{
+		if (!pushpop.error){
 			res.send('ok').status(200);
+		}	else{
+			res.send(pushpop.error).status(500);
 		}
 	});
 
