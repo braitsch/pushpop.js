@@ -27,7 +27,9 @@ exports.set = function(pName, cback)
 // update the local upload destination //
 	opts.pdir = opts.local + '/' + opts.pName;
 // and always ensure it actually exists //
-	if (!fs.existsSync(opts.pdir)) fs.mkdirSync(opts.pdir);
+	console.log('opts.pdir', opts.pdir);
+	console.log('fs.existsSync(opts.pdir)', fs.existsSync(opts.pdir));
+	//if (!fs.existsSync(opts.pdir)) fs.mkdirSync(opts.pdir);
 // get the requested project from the database //
 	db.getProjectByName(pName, cback);
 }
