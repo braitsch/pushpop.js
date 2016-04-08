@@ -1,15 +1,15 @@
 
 var pushpop = require('./pushpop');
 // overwrite file names with unique ids //
-pushpop.useUniqueIds(true);
+pushpop.uniqueIds(true);
 // enable verbose logging //
-pushpop.useVerboseLogs(true);
+pushpop.verboseLogs(true);
 // local upload directory is relative to project root //
-pushpop.setUploadDirectory('uploads');
+pushpop.uploadTo('uploads');
 // use mongodb as the default database //
-pushpop.useDB('mongo');
+pushpop.database('mongo');
 // save files to gcloud instead of the local filesystem //
-pushpop.useService('gcloud', 'pushpop');
+pushpop.service('gcloud', 'pushpop');
 
 module.exports = function(app) {
 

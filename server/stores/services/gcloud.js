@@ -36,11 +36,12 @@ var gcloud = function(bucketName, log)
 	}
 	this.upload = function(file, destination, cback)
 	{
-		log('gcloud :: uploading to bucket', bucketName)
+		log('gcloud :: uploading', file)
 		bucket.upload(file, { destination: bucket.file(destination) }, cback);
 	}
 	this.delete = function(path, cback)
 	{
+		log('gcloud :: deleting files:', path)
 		bucket.deleteFiles({ prefix: path }, cback);
 	}
 	this.listFiles = function(path, cback)

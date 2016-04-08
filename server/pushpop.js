@@ -18,40 +18,40 @@ var settings = {
 	setup methods 
 */
 
-exports.useUniqueIds = function(ok)
+exports.uniqueIds = function(ok)
 {
 	settings.uniqueIds = ok;
 }
 
-exports.useVerboseLogs = function(ok)
+exports.verboseLogs = function(ok)
 {
 	settings.verboseLogs = ok;
 }
 
-exports.setUploadDirectory = function(dir)
+exports.uploadTo = function(dir)
 {
 	settings.uploads = dir;
 	settings.uploads = path.join(__dirname, '..', settings.uploads);
 	checkDirectoryExists(settings.uploads);
 }
 
-exports.useDB = function(db_name)
+exports.database = function(db_name)
 {
 	db_name = db_name.toLowerCase();
 	if (db_name == 'mongo'){
 		db = require('./stores/dbs/mongo')(log);
 	}	else{
-		log('unknown database : ', db_name);
+		log('local :: unknown database : ', db_name);
 	}
 }
 
-exports.useService = function(service_name, bucket)
+exports.service = function(service_name, bucket)
 {
 	service_name = service_name.toLowerCase();
 	if (service_name == 'gcloud'){
 		service = require('./stores/services/gcloud')(bucket, log);
 	}	else{
-		log('unknown service : ', service_name);
+		log('local :: unknown service : ', service_name);
 	}
 }
 
@@ -92,7 +92,6 @@ exports.upload = function(req, res, next)
 		req.media.type = 'image';
 		req.media.name = getFileName(filename);
 		req.media.ext = getFileType(filename);
-		req.media.host = ''; // default to localhost //
 		var fstream = fs.createWriteStream(settings.pDirectory + '/' + req.media.name + req.media.ext);
 		file.pipe(fstream);
 	});
@@ -101,7 +100,6 @@ exports.upload = function(req, res, next)
 		fields[key] = value;
 	});
 	busboy.on('finish', function() {
-		log('data received');
 		if (fields.type == 'video'){
 			req.media.type = 'video';
 			req.media.url = fields.url;
@@ -137,7 +135,6 @@ exports.delete = function(req, res, next)
 		fields[key] = value;
 	});
 	busboy.on('finish', function() {
-		log('data received');
 		delMediaFromProject(fields.pname, fields.index, next);
 	});
 	req.pipe(busboy);
@@ -145,13 +142,11 @@ exports.delete = function(req, res, next)
 
 exports.reset = function(cback)
 {
-	log('wiping database');
 	db.reset(function(){
 		if (service){
-			log('wiping service');
 			service.delete(settings.pName, cback)
 		}	else{
-			log('wiping local files');
+			log('local :: wiping all local files');
 			var files = fs.readdirSync(settings.uploads);
 			if (files.length > 0){
 				for (var i = 0; i < files.length; i++) {
@@ -159,7 +154,6 @@ exports.reset = function(cback)
 					if (fs.statSync(filePath).isFile()){
 						fs.unlinkSync(filePath);
 					}	else{
-						log(filePath);
 						exec('rm -rf '+filePath, function ( err, stdout, stderr ){ });
 					}
 				}
@@ -175,7 +169,7 @@ exports.reset = function(cback)
 
 var saveThumb = function(tdata, req, cback)
 {
-	log('generating thumbnail');
+	log('local :: generating thumbnail');
 	var img = gm(settings.pDirectory + '/' + req.media.name + req.media.ext);
 	img.crop(tdata.crop.w, tdata.crop.h, tdata.crop.x, tdata.crop.y);
 // do not resize if we did not explicitly receive a width & height value //
@@ -186,7 +180,7 @@ var saveThumb = function(tdata, req, cback)
 
 var addMediaToProject = function(req, next)
 {
-	var project = db.get(settings.pName, function(project){
+	db.get(settings.pName, function(project){
 		project.media.push(req.media);
 		project.last_updated = new Date();
 		db.save(project, next);
@@ -196,9 +190,20 @@ var addMediaToProject = function(req, next)
 var delMediaFromProject = function(pName, index, next)
 {
 	db.get(pName, function(project){
+		var asset = project.media[index];
+		if (asset.type == 'image'){
+			var large = asset.name + asset.ext;
+			var thumb = asset.name + '_thumb' + asset.ext;
+			if (!asset.host){
+				log('local :: deleting from local filesystem:', large);
+				fs.unlinkSync(settings.uploads +'/'+ project.name +'/'+ large);
+				fs.unlinkSync(settings.uploads +'/'+ project.name +'/'+ thumb);
+			}	else if (service) {
+				service.delete(project.name + '/'+ asset.name, function(){  });
+			}
+		}
 		project.media.splice(index, 1);
 		db.save(project, next);
-	// TODO remove from service / filesystem //
 	});
 }
 
@@ -209,21 +214,21 @@ var saveToCloudService = function(req, next)
 	var thumb = req.media.name + '_thumb' + req.media.ext;
 	service.upload(settings.pDirectory + '/' + large, settings.pName + '/' + large, function(e){
 		if (e){
-			log('error transferring file to service', e);
+			log('local :: error transferring file to service', e);
 			addMediaToProject(req, next);
 		}	else{
+			log('local :: large file uploaded to service');
 			fs.unlinkSync(settings.pDirectory + '/' + large);
-			log('large file uploaded to service');
 			if (fs.existsSync(settings.pDirectory + '/' + thumb) == false) {
 				addMediaToProject(req, next);
 			}	else{
 				service.upload(settings.pDirectory + '/' + thumb, settings.pName + '/' + thumb, function(e){
 					if (e){
-						log('error transferring file to service', e);
+						log('local :: error transferring file to service', e);
 						addMediaToProject(req, next);
 					}	else{
 						fs.unlinkSync(settings.pDirectory + '/' + thumb);
-						log('thumb file uploaded to service');
+						log('local :: thumb file uploaded to service');
 						addMediaToProject(req, next);
 					}
 				});
@@ -248,7 +253,7 @@ var getFileType = function(name)
 
 var checkDirectoryExists = function(dir)
 {
-	if (!fs.existsSync(dir)) { log('creating directory', dir); fs.mkdirSync(dir); }
+	if (!fs.existsSync(dir)) { log('local :: creating directory', dir); fs.mkdirSync(dir); }
 }
 
 var log = function()

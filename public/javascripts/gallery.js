@@ -10,13 +10,19 @@ $(function() {
 		var media = $(this).data('media');
 		var pName = $(this).data('pname');
 		if (media.type == 'image'){
-			var thumb = media.host + '/' + pName + '/' + media.name + '_thumb' + media.ext;
+			var large = '/' + pName + '/' + media.name + media.ext;
+			var thumb = '/' + pName + '/' + media.name + '_thumb' + media.ext;
+	// prepend the host url if media is externally hosted //
+			if (media.host != undefined) {
+				large = media.host + large;
+				thumb = media.host + thumb;
+			}
 			image.attr('src', thumb);
 	// store the url to the large image //
-			$(this).data('url', media.host + '/' + pName + '/' + media.name + media.ext);
+			$(this).data('url', large);
 		}	else if (media.type == 'video'){
 			image.attr('src', media.preview);
-	// store the url to associated video file //
+	// store the url to the video file //
 			$(this).data('url', media.url);
 		}
 	// show the thumbnail once it's loaded //
