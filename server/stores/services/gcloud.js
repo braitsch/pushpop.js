@@ -1,9 +1,9 @@
 
-var gcloud = function(bucketName)
+var gcloud = function(bucketName, log)
 {
 	var gcloud;
 	var gcloudURL = 'https://storage.googleapis.com/'+bucketName;
-	console.log('connecting to gcloud :: ', bucketName)
+	log('gcloud :: connecting to bucket "'+bucketName+'"');
 	if (process.env.GCLOUD_KEY_FILE){
 		gcloud = require('gcloud')({
 			projectId: process.env.GCLOUD_PROJECT,
@@ -22,10 +22,11 @@ var gcloud = function(bucketName)
 */
 	bucket.makePublic(function(e, response){
 		if (e){
-			console.log('unable to connnect to gcloud', e);
+			log('gcloud :: unable to make bucket "'+bucketName+'" publicly visible');
+			log('gcloud ::', e);
 		}	else{
 			if (response[0][0].entity == 'allUsers' && response[0][0].role == 'READER'){
-				console.log('gcloud :: bucket', bucketName, 'is publicly visible');
+				log('gcloud :: bucket "'+bucketName+'" is publicly visible');
 			}
 		}
 	});
@@ -35,6 +36,7 @@ var gcloud = function(bucketName)
 	}
 	this.upload = function(file, destination, cback)
 	{
+		log('gcloud :: uploading to bucket', bucketName)
 		bucket.upload(file, { destination: bucket.file(destination) }, cback);
 	}
 	this.delete = function(path, cback)
@@ -45,7 +47,7 @@ var gcloud = function(bucketName)
 	{
 		bucket.getFiles({ prefix:path }, function(e, files) {
 			if (e) {
-				console.log(e);
+				log(e);
 			}	else{
 				var a = [];
 				for (var i=0; i<files.length; i++){
@@ -67,9 +69,9 @@ var gcloud = function(bucketName)
 	}
 }
 
-module.exports = function(bucketName) 
+module.exports = function(bucketName, logFunc) 
 {
-	return new gcloud(bucketName);
+	return new gcloud(bucketName, logFunc);
 };
 
 

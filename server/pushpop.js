@@ -1,39 +1,76 @@
 
-var opts;
 var fs = require('fs');
 var gm = require('gm').subClass({ imageMagick: true });
 var path = require('path');
 var exec = require('child_process').exec;
-var guid = function(){return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {var r = Math.random()*16|0,v=c=='x'?r:r&0x3|0x8;return v.toString(16);});}
 var Busboy = require('busboy');
+var guid = function(){return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {var r = Math.random()*16|0,v=c=='x'?r:r&0x3|0x8;return v.toString(16);});}
 
-var gCloud;
-// use mongodb as default datastore //
-var db = require('./mongo');
-
-/*
-	public methods
-*/
-
-exports.settings = function(obj)
-{
-	opts = obj;
-	opts.local = path.join(__dirname, '..', obj.local);
-	if (!fs.existsSync(opts.local)) mkdir(opts.local);
+var db, service;
+var settings = {
+	uniqueIds:true,
+	verboseLogs:false,
+	uploads:'uploads',
+	pName:'my-project',
 }
 
-exports.set = function(pName, cback)
+/*
+	setup methods 
+*/
+
+exports.useUniqueIds = function(ok)
 {
-	opts.pName = pName;
+	settings.uniqueIds = ok;
+}
+
+exports.useVerboseLogs = function(ok)
+{
+	settings.verboseLogs = ok;
+}
+
+exports.setUploadDirectory = function(dir)
+{
+	settings.uploads = dir;
+	settings.uploads = path.join(__dirname, '..', settings.uploads);
+	checkDirectoryExists(settings.uploads);
+}
+
+exports.useDB = function(db_name)
+{
+	db_name = db_name.toLowerCase();
+	if (db_name == 'mongo'){
+		db = require('./stores/dbs/mongo')(log);
+	}	else{
+		log('unknown database : ', db_name);
+	}
+}
+
+exports.useService = function(service_name, bucket)
+{
+	service_name = service_name.toLowerCase();
+	if (service_name == 'gcloud'){
+		service = require('./stores/services/gcloud')(bucket, log);
+	}	else{
+		log('unknown service : ', service_name);
+	}
+}
+
+/*
+	get & set the active project
+*/
+
+exports.setProject = function(pName, cback)
+{
+	settings.pName = pName;
 // update the local upload destination //
-	opts.pdir = opts.local + '/' + opts.pName;
-// and always ensure it exists before we attempt to write to it //
-	if (!fs.existsSync(opts.pdir)) mkdir(opts.pdir);
+	settings.pDirectory = settings.uploads + '/' + settings.pName;
+// and always ensure directory exists before we attempt to write to it //
+	checkDirectoryExists(settings.pDirectory);
 // get the requested project from the database //
 	db.get(pName, cback);
 }
 
-exports.get = function(pName, cback)
+exports.getProject = function(pName, cback)
 {
 	db.get(pName, cback);
 }
@@ -43,14 +80,9 @@ exports.getAll = function(cback)
 	db.getAll(cback);
 }
 
-exports.use = function(service, bucket)
-{
-	if (service == 'gcloud'){
-		gCloud = require('./gcloud')(bucket);
-	}	else{
-		log('unknown cloud service requested');
-	}
-}
+/*
+	media upload & delete
+*/
 
 exports.upload = function(req, res, next)
 {
@@ -61,7 +93,7 @@ exports.upload = function(req, res, next)
 		req.media.name = getFileName(filename);
 		req.media.ext = getFileType(filename);
 		req.media.host = ''; // default to localhost //
-		var fstream = fs.createWriteStream(opts.pdir + '/' + req.media.name + req.media.ext);
+		var fstream = fs.createWriteStream(settings.pDirectory + '/' + req.media.name + req.media.ext);
 		file.pipe(fstream);
 	});
 	var fields = {};
@@ -78,17 +110,17 @@ exports.upload = function(req, res, next)
 			return;
 		}	else if (fields.type == 'image'){
 			if (fields.thumb == undefined){
-				if (gCloud == undefined){
+				if (service == undefined){
 					addMediaToProject(req, next);
 				}	else{
-					saveToGoogleCloud(req, next);
+					saveToCloudService(req, next);
 				}
 			}	else{
 				saveThumb(JSON.parse(fields.thumb), req, function(){
-					if (gCloud == undefined){
+					if (service == undefined){
 						addMediaToProject(req, next);
 					}	else{
-						saveToGoogleCloud(req, next);
+						saveToCloudService(req, next);
 					}
 				})
 			}
@@ -113,17 +145,17 @@ exports.delete = function(req, res, next)
 
 exports.reset = function(cback)
 {
-	log('wiping datastore');
+	log('wiping database');
 	db.reset(function(){
-		if (gCloud){
-			log('wiping gcloud');
-			gCloud.delete(opts.pName, cback)
+		if (service){
+			log('wiping service');
+			service.delete(settings.pName, cback)
 		}	else{
 			log('wiping local files');
-			var files = fs.readdirSync(opts.local);
+			var files = fs.readdirSync(settings.uploads);
 			if (files.length > 0){
 				for (var i = 0; i < files.length; i++) {
-					var filePath = opts.local + '/' + files[i];
+					var filePath = settings.uploads + '/' + files[i];
 					if (fs.statSync(filePath).isFile()){
 						fs.unlinkSync(filePath);
 					}	else{
@@ -137,20 +169,24 @@ exports.reset = function(cback)
 	});
 }
 
+/*
+	internal methods 
+*/
+
 var saveThumb = function(tdata, req, cback)
 {
 	log('generating thumbnail');
-	var img = gm(opts.pdir + '/' + req.media.name + req.media.ext);
+	var img = gm(settings.pDirectory + '/' + req.media.name + req.media.ext);
 	img.crop(tdata.crop.w, tdata.crop.h, tdata.crop.x, tdata.crop.y);
 // do not resize if we did not explicitly receive a width & height value //
 	if (tdata.width != 0 && tdata.height != 0) img.resize(tdata.width, tdata.height, '!');
 	img.noProfile();
-	img.write(opts.pdir + '/' + req.media.name + '_thumb'+ req.media.ext, cback);
+	img.write(settings.pDirectory + '/' + req.media.name + '_thumb'+ req.media.ext, cback);
 }
 
 var addMediaToProject = function(req, next)
 {
-	var project = db.get(opts.pName, function(project){
+	var project = db.get(settings.pName, function(project){
 		project.media.push(req.media);
 		project.last_updated = new Date();
 		db.save(project, next);
@@ -162,33 +198,32 @@ var delMediaFromProject = function(pName, index, next)
 	db.get(pName, function(project){
 		project.media.splice(index, 1);
 		db.save(project, next);
-	// remove from gcloud / filesystem //
+	// TODO remove from service / filesystem //
 	});
 }
 
-var saveToGoogleCloud = function(req, next)
+var saveToCloudService = function(req, next)
 {
-	log('uploading to google cloud');
-	req.media.host = gCloud.getURL();
+	req.media.host = service.getURL();
 	var large = req.media.name + req.media.ext;
 	var thumb = req.media.name + '_thumb' + req.media.ext;
-	gCloud.upload(opts.pdir + '/' + large, opts.pName + '/' + large, function(e){
+	service.upload(settings.pDirectory + '/' + large, settings.pName + '/' + large, function(e){
 		if (e){
-			log('error transferring file to gcloud', e);
+			log('error transferring file to service', e);
 			addMediaToProject(req, next);
 		}	else{
-			fs.unlinkSync(opts.pdir + '/' + large);
-			log('large file uploaded to gcloud');
-			if (fs.existsSync(opts.pdir + '/' + thumb) == false) {
+			fs.unlinkSync(settings.pDirectory + '/' + large);
+			log('large file uploaded to service');
+			if (fs.existsSync(settings.pDirectory + '/' + thumb) == false) {
 				addMediaToProject(req, next);
 			}	else{
-				gCloud.upload(opts.pdir + '/' + thumb, opts.pName + '/' + thumb, function(e){
+				service.upload(settings.pDirectory + '/' + thumb, settings.pName + '/' + thumb, function(e){
 					if (e){
-						log('error transferring file to gcloud', e);
+						log('error transferring file to service', e);
 						addMediaToProject(req, next);
 					}	else{
-						fs.unlinkSync(opts.pdir + '/' + thumb);
-						log('thumb file uploaded to gcloud');
+						fs.unlinkSync(settings.pDirectory + '/' + thumb);
+						log('thumb file uploaded to service');
 						addMediaToProject(req, next);
 					}
 				});
@@ -197,13 +232,9 @@ var saveToGoogleCloud = function(req, next)
 	});
 }
 
-/*
-	internal helpers
-*/
-
 var getFileName = function(name)
 {
-	if (opts.guid == true){
+	if (settings.uniqueIds == true){
 		return guid();
 	}	else{
 		return name.substr(0, name.lastIndexOf('.')).toLowerCase().replace(/\s/g, '_');
@@ -215,15 +246,15 @@ var getFileType = function(name)
 	return name.substr(name.lastIndexOf('.'));
 }
 
-var mkdir = function(dir)
+var checkDirectoryExists = function(dir)
 {
-	log('creating directory', dir); fs.mkdirSync(dir);
+	if (!fs.existsSync(dir)) { log('creating directory', dir); fs.mkdirSync(dir); }
 }
 
 var log = function()
 {
 	var str = '';
 	for(p in arguments) str += arguments[p] + ' ';
-	if (opts.verbose) console.log('[ pushpop –– ' + str + ' ]');
+	if (settings.verboseLogs) console.log('[ pushpop –– ' + str + ' ]');
 }
 

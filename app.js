@@ -20,7 +20,6 @@ require('./server/stripe')(app);
 
 http.listen(app.get('port'), function(q, r)
 {
-	console.log('*********************************************');
 	console.log('Express server listening on port', app.get('port'));
 });
 

@@ -1,16 +1,15 @@
 
 var pushpop = require('./pushpop');
-pushpop.settings({
 // overwrite file names with unique ids //
-	'guid' : true,
+pushpop.useUniqueIds(true);
 // enable verbose logging //
-	'verbose' : true,
+pushpop.useVerboseLogs(true);
 // local upload directory is relative to project root //
-	'local' : 'uploads'
-});
-
+pushpop.setUploadDirectory('uploads');
+// use mongodb as the default database //
+pushpop.useDB('mongo');
 // save files to gcloud instead of the local filesystem //
-pushpop.use('gcloud', 'pushpop');
+pushpop.useService('gcloud', 'pushpop');
 
 module.exports = function(app) {
 
@@ -22,13 +21,13 @@ module.exports = function(app) {
 	app.get('/project/:id', function(req, res)
 	{
 	// set the active project //
-		pushpop.set(req.params['id'], function(project){
+		pushpop.setProject(req.params['id'], function(project){
 			res.render('gallery', { project : project });
 		});
 	});	
 
 	app.get('/project/:id/print', function(req, res){
-		pushpop.get(req.params['id'], function(project){
+		pushpop.getProject(req.params['id'], function(project){
 			res.send({ project : project });
 		})
 	});
@@ -43,10 +42,6 @@ module.exports = function(app) {
 		pushpop.reset(function(){
 			res.redirect('/');
 		});
-	});
-
-	app.get('*', function(req, res){
-		res.redirect('/');
 	});
 
 	app.post('/delete', pushpop.delete, function(req, res)
@@ -65,6 +60,10 @@ module.exports = function(app) {
 		}	else{
 			res.send(pushpop.error).status(500);
 		}
+	});
+
+	app.get('*', function(req, res){
+		res.redirect('/');
 	});
 
 };
