@@ -212,19 +212,24 @@ var delMediaFromProject = function(pName, index, next)
 {
 	db.get(pName, function(project){
 		var asset = project.media[index];
-		if (asset.type == 'image'){
-			var large = asset.name + asset.ext;
-			var thumb = asset.name + '_thumb' + asset.ext;
-			if (!asset.host){
-				log('local :: deleting from local filesystem:', large);
-				fs.unlinkSync(settings.uploads +'/'+ project.name +'/'+ large);
-				fs.unlinkSync(settings.uploads +'/'+ project.name +'/'+ thumb);
-			}	else if (service) {
-				service.delete(project.name + '/'+ asset.name, function(){  });
+// ensure asset still exists before we attempt to delete it //
+		if (asset == undefined){
+			next();
+		}	else{
+			if (asset.type == 'image'){
+				var large = asset.name + asset.ext;
+				var thumb = asset.name + '_thumb' + asset.ext;
+				if (!asset.host){
+					log('local :: deleting from local filesystem:', large);
+					fs.unlinkSync(settings.uploads +'/'+ project.name +'/'+ large);
+					fs.unlinkSync(settings.uploads +'/'+ project.name +'/'+ thumb);
+				}	else if (service) {
+					service.delete(project.name + '/'+ asset.name, function(){  });
+				}
 			}
+			project.media.splice(index, 1);
+			db.save(project, next);
 		}
-		project.media.splice(index, 1);
-		db.save(project, next);
 	});
 }
 
@@ -283,4 +288,33 @@ var log = function()
 	for(p in arguments) str += arguments[p] + ' ';
 	if (settings.verboseLogs) console.log('[ pushpop –– ' + str + ' ]');
 }
+
+/*
+	blast away anything older than three minutes
+*/
+
+var trash = [];
+var CronJob = require('cron').CronJob;
+new CronJob('*/1 * * * *', function(){
+	db.getAll(function(projects){
+		var now = new Date().getTime();
+		var exp = (1000 * 60) * 3; // 3 minutes //
+		for(var i = projects.length - 1; i >= 0; i--) {
+			var p = projects[i];
+			for (var j = p.media.length - 1; j >= 0; j--) {
+				if (now - p.media[j].date.getTime() > exp) trash.push({p:p.name, i:j});
+			}
+		}
+		if (trash.length > 0) emptyTrash();
+	});
+}, null, true, 'America/Los_Angeles');
+
+var emptyTrash = function()
+{
+	delMediaFromProject(trash[0].p, trash[0].i, function(){
+		trash.splice(0, 1); if (trash.length > 0) emptyTrash();
+	});
+}
+
+
 
