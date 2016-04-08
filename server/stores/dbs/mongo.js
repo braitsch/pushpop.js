@@ -45,6 +45,8 @@ var mongo = function(log)
 	// get the requested project if it exists //
 		projects.findOne({ name:pName }, function(e, project){
 			if (project){
+		// sort media by date created //
+				project.media.sort(function(a, b){ return a.date < b.date; });
 				cback(project);
 			}	else{
 		// otherwise return a new empty project //

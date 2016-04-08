@@ -35,7 +35,7 @@ function PushPop()
 		if ($(target).data('media').type == 'image'){
 			$imagePreview.show();
 			$imagePreview.attr('src', $(target).data('url'));
-		}	else if ($(target).data('type') == 'video'){
+		}	else if ($(target).data('media').type == 'video'){
 			$videoPreview.show();
 			$videoPreview.attr('src', $(target).data('url'));
 		}

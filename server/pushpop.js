@@ -1,4 +1,23 @@
 
+/*
+    Copyright (C) 2016 Stephen Braitsch [http://braitsch.io]
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+    The above copyright notice and this permission notice shall be included in all
+    copies or substantial portions of the Software.
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    SOFTWARE.
+*/
+
 var fs = require('fs');
 var gm = require('gm').subClass({ imageMagick: true });
 var path = require('path');
@@ -144,7 +163,8 @@ exports.reset = function(cback)
 {
 	db.reset(function(){
 		if (service){
-			service.delete(settings.pName, cback)
+	// delete everything in the bucket //
+			service.delete('', cback)
 		}	else{
 			log('local :: wiping all local files');
 			var files = fs.readdirSync(settings.uploads);
@@ -181,6 +201,7 @@ var saveThumb = function(tdata, req, cback)
 var addMediaToProject = function(req, next)
 {
 	db.get(settings.pName, function(project){
+		req.media.date = new Date();
 		project.media.push(req.media);
 		project.last_updated = new Date();
 		db.save(project, next);

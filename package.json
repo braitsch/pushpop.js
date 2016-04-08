@@ -1,11 +1,11 @@
 {
-  "name": "braitsch.io",
-  "version": "1.0.0",
-  "description": "http://braitsch.io",
+  "name": "pushpop.js",
+  "version": "0.0.1",
+  "description": "A lightweight & scalable media management system for Node.js",
   "author": "Stephen Braitsch <stephen@braitsch.io>",
   "repository": {
     "type": "git",
-    "url": "git@github.com:braitsch/braitsch.io.git"
+    "url": "git@github.com:braitsch/pushpop.js.git"
   },
   "dependencies": {
     "body-parser": "^1.15.0",

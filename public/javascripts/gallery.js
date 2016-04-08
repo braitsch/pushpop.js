@@ -23,6 +23,7 @@ $(function() {
 		}	else if (media.type == 'video'){
 			image.attr('src', media.preview);
 	// store the url to the video file //
+			console.log('media.url', media.url)
 			$(this).data('url', media.url);
 		}
 	// show the thumbnail once it's loaded //

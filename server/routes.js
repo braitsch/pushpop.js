@@ -6,7 +6,7 @@ pushpop.uniqueIds(true);
 pushpop.verboseLogs(true);
 // local upload directory is relative to project root //
 pushpop.uploadTo('uploads');
-// use mongodb as the default database //
+// use mongodb as the database //
 pushpop.database('mongo');
 // save files to gcloud instead of the local filesystem //
 pushpop.service('gcloud', 'pushpop');
@@ -15,7 +15,7 @@ module.exports = function(app) {
 
 	app.get('/', function (req, res)
 	{	
-		res.redirect('/project/one');
+		res.redirect('/project/gallery');
 	});
 
 	app.get('/project/:id', function(req, res)
@@ -63,7 +63,11 @@ module.exports = function(app) {
 	});
 
 	app.get('*', function(req, res){
-		res.redirect('/');
+		if (req.url != '/favicon.ico'){
+			res.redirect('/');
+		}	else{
+			res.sendStatus(404);
+		}
 	});
 
 };
