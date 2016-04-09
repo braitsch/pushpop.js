@@ -1,5 +1,5 @@
 
-var pushpop = require('./pushpop');
+var pushpop = require('pushpop');
 // overwrite file names with unique ids //
 pushpop.uniqueIds(true);
 // enable verbose logging //

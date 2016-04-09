@@ -1,0 +1,26 @@
+{
+  "name": "pushpop",
+  "version": "0.0.1",
+  "description": "lightweight media manager and thumbnail generator for Node.js",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/braitsch/pushpop.js.git"
+  },
+  "keywords": [
+    "thumbnail",
+    "graphicsmagick"
+  ],
+  "author": "Stephen Braitsch <stephen@braitsch.io>",
+  "bugs": {
+    "url": "https://github.com/braitsch/pushpop.js/issues"
+  },
+  "license" : "MIT",
+  "homepage": "https://github.com/braitsch/pushpop.js#readme",
+  "dependencies": {
+    "mongodb": "^2.1.7",
+    "gcloud": "^0.28.0",
+    "gm": "^1.21.1",
+    "busboy": "^0.2.12"
+  }
+}

@@ -58,7 +58,7 @@ exports.database = function(db_name)
 {
 	db_name = db_name.toLowerCase();
 	if (db_name == 'mongo'){
-		db = require('./stores/dbs/mongo')(log);
+		db = require('./dbs/mongo')(log);
 	}	else{
 		log('local :: unknown database : ', db_name);
 	}
@@ -68,7 +68,7 @@ exports.service = function(service_name, bucket)
 {
 	service_name = service_name.toLowerCase();
 	if (service_name == 'gcloud'){
-		service = require('./stores/services/gcloud')(bucket, log);
+		service = require('./services/gcloud')(bucket, log);
 	}	else{
 		log('local :: unknown service : ', service_name);
 	}

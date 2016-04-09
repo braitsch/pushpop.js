@@ -22,7 +22,7 @@ function PushPop()
 {
 
 	/*
-		where should we sent the data?
+		where should we send the data?
 	*/
 
 	var api = {
@@ -39,6 +39,13 @@ function PushPop()
 		width:100, height:100,
 		ratio:{ width:16, height:9}
 	};
+
+	/*
+		maximum file size for uploads in megabytes
+		comment this line out to allow any size file
+	*/
+
+	var maxFileSize = 1;
 
 	/*
 		and these are your two public methods
@@ -66,7 +73,7 @@ function PushPop()
 	}
 
 	/*
-		you shouldn't need to change anything after this
+		you shouldn't need to change anything below here
 	*/
 
 	var $modalPop = $('.modal-pop');
@@ -121,20 +128,24 @@ function PushPop()
 	fileDialog.change(function(e) {
 		clearThumbnail();
 		if (this.files && this.files[0]) {
-			var reader = new FileReader();
-			reader.onload = function (e) {
-			// capture the source image dimensions //
-				var img = new Image();
-				img.onload = function(){
-					image.width = img.width, 
-					image.height = img.height;
-				};
-				img.src = e.target.result;
-				mediaPreview.attr('src', e.target.result);
-				imageInput.val(fileDialog.val().replace(/C:\\fakepath\\/i, ''));
+			if (maxFileSize && this.files[0].size/1000/1000 > maxFileSize){
+				alert('The maximum file size for uploads in this demo is '+maxFileSize+'MB.');
+			}	else{
+				var reader = new FileReader();
+				reader.onload = function (e) {
+				// capture the source image dimensions //
+					var img = new Image();
+					img.onload = function(){
+						image.width = img.width, 
+						image.height = img.height;
+					};
+					img.src = e.target.result;
+					mediaPreview.attr('src', e.target.result);
+					imageInput.val(fileDialog.val().replace(/C:\\fakepath\\/i, ''));
+				}
+				reader.readAsDataURL(this.files[0]);
+				thumbInstructions.show();
 			}
-			reader.readAsDataURL(this.files[0]);
-			thumbInstructions.show();
 		}
 	});
 // setup the form to handle the image upload //
