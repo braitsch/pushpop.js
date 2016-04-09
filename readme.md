@@ -2,7 +2,7 @@
 
 A lightweight image uploader and thumbnail generator for [Node.js](https://nodejs.org)
 
-![pushpop-modal](./readme.img/pushpop-modal.png)
+![pushpop-modal](./readme.img/pushpop-modal.png?raw=true)
 
 ##About
 
