@@ -1,5 +1,5 @@
 
-var pushpop = require('pushpop');
+var pushpop = require('./pushpop/index');
 // overwrite file names with unique ids //
 pushpop.uniqueIds(true);
 // enable verbose logging //
@@ -10,6 +10,10 @@ pushpop.uploadTo('uploads');
 pushpop.database('mongo');
 // save files to gcloud instead of the local filesystem //
 pushpop.service('gcloud', 'pushpop');
+
+// delete from demo anything that is older than three minutes //
+var CronJob = require('cron').CronJob;
+new CronJob('*/1 * * * *', pushpop.purge, 3, true, 'America/Los_Angeles');
 
 module.exports = function(app) {
 

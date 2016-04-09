@@ -290,31 +290,28 @@ var log = function()
 }
 
 /*
-	blast away anything older than three minutes
+	aux method to delete files older than a certain age
 */
 
-var trash = [];
-var CronJob = require('cron').CronJob;
-new CronJob('*/1 * * * *', function(){
-	db.getAll(function(projects){
-		var now = new Date().getTime();
-		var exp = (1000 * 60) * 3; // 3 minutes //
-		for(var i = projects.length - 1; i >= 0; i--) {
-			var p = projects[i];
-			for (var j = p.media.length - 1; j >= 0; j--) {
-				if (now - p.media[j].date.getTime() > exp) trash.push({p:p.name, i:j});
-			}
-		}
-		if (trash.length > 0) emptyTrash();
-	});
-}, null, true, 'America/Los_Angeles');
-
-var emptyTrash = function()
+exports.purge = function(maxAge)
 {
-	delMediaFromProject(trash[0].p, trash[0].i, function(){
-		trash.splice(0, 1); if (trash.length > 0) emptyTrash();
-	});
+	var empty = function(pName, index){
+		delMediaFromProject(pName, index, check);
+	}
+	var check = function(){
+		var now = new Date().getTime();
+		var exp = ((1000 * 60) * maxAge);
+		db.getAll(function(projects){
+			for(var i = projects.length - 1; i >= 0; i--) {
+				var p = projects[i];
+				for (var j=0; j<p.media.length; j++) {
+					var age = (now - p.media[j].date.getTime());
+					if (age > exp) {
+						empty(p.name, j); return;
+					}
+				}
+			}
+		});
+	}
+	check();
 }
-
-
-
