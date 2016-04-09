@@ -1,6 +1,9 @@
 /*
 	modal push
 */
+.modal-push .modal-title .instructions, .modal-pop .modal-title .instructions {
+  display: none;
+  color: #337ab7; }
 .modal-push .modal-dialog, .modal-pop .modal-dialog {
   width: 610px; }
 .modal-push .modal-body, .modal-pop .modal-body {

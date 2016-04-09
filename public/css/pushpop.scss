@@ -4,6 +4,12 @@
 */
 
 .modal-push, .modal-pop{
+	.modal-title{
+		.instructions{
+			display:none;
+			color:#337ab7;
+		}	
+	}
 	.modal-dialog{
 		width:610px;
 	}

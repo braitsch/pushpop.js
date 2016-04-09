@@ -1,5 +1,5 @@
 
-$footerheight: 40px;
+$footerheight: 34px;
 
 html {
 	position: relative;
@@ -15,22 +15,29 @@ body {
 
 .navbar{
 	.btn{
-		width:100px;
+		min-width:100px;
 		margin-right:5px;
 	}
 }
-	.navbar>.container .navbar-brand{
-		margin-left:-8px;
-	}
+.navbar>.container .navbar-brand{
+	margin-left:-8px;
+}
 
 .masthead{
 	margin-top:70px;
 	height: 100%;
 	border-width: 1px;
-	padding: 30px 40px;
+	padding: 20px 20px;
 	border-style: solid;
 	border-color: #ccc;
 	margin-bottom:20px;
+	text-align:center;
+	h3, h4{
+		margin:0 0 6px 0;
+	}
+	.btn{ 
+		width:82%; 
+	}
 }
 
 /*

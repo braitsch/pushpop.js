@@ -5,7 +5,8 @@
 			.modal-header
 				button.close(type='button', data-dismiss='modal', aria-label='Close')
 					span(aria-hidden='true') ×
-				h4.modal-title Push Media
+				h4.modal-title Upload Media 
+					span.instructions | Click & Drag to Define Thumbnail
 			.modal-body
 				.well
 					.media-preview
@@ -49,7 +50,7 @@
 						button(type="submit").btn.btn-primary.btn-upload Upload
 				#video
 					form(method="post" enctype="multipart/form-data")
-						input.media-input.form-control
+						input.media-input.form-control(placeholder='enter a youtube or vimeo url')
 						button(type="submit").btn.btn-success.btn-save-video Save
 
 
