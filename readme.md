@@ -35,6 +35,20 @@ To add **pushpop.js** to an existing project:
 
 2. Copy the client side JavaScript & CSS files in ``/sample-app/public`` to an appropriate location in your project.
 
+	**/sample-app/public/css**
+	
+	* pushpop.min.css
+	* bootstrap.min.css
+	
+	**/sample-app/public/javascripts**
+
+	* pushpop.min.js	
+	* jquery-2.1.4.min.js
+	* jquery.form.min.js
+	* bootstrap.min.js
+
+	**pushpop** uses a very small subset of [Twitter Bootstrap](http://getbootstrap.com/) to render the modal windows and the [jQuery Form Plugin](http://malsup.com/jquery/form/) to handle the image uploads. 
+
 3. Require & configure the **pushpop** middleware on your server as explained next.
 
 ##Middleware
