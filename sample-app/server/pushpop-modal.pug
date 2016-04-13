@@ -1,0 +1,100 @@
+doctype html
+html
+	head
+		title pushpop.js sample app
+		meta(charset="utf-8")
+		meta(name="robots" content="index,follow")
+		meta(name="viewport" content="width=device-width,initial-scale=1")
+		meta(name="description" content="pushpop.js is a lightweight media manager and thumbnail generator for Node.js")
+		link(rel='stylesheet', href='/css/bootstrap.min.css')
+		link(rel='stylesheet', href='/css/pushpop.min.css')
+	body
+		.btn.btn-default(style='margin:20px;float:right;') Open Upload Modal
+
+		//- pushpop modal upload //
+
+		.modal.fade.modal-push
+			.modal-dialog
+				.modal-content
+					.modal-header
+						button.close(type='button', data-dismiss='modal', aria-label='Close')
+							span(aria-hidden='true') ×
+						h4.modal-title Upload Media 
+							span.instructions | Click & Drag to Define Thumbnail
+					.modal-body
+						.well
+							.media-preview
+								.thumb-generator
+								img
+								iframe(frameborder='0', webkitAllowFullScreen, mozallowfullscreen, allowFullScreen)
+						.progress
+							.progress-bar.progress-bar-striped.active(role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100")
+					.modal-footer
+						.thumb-settings.form-inline
+							.form-group
+								label.ts Thumb Style
+								select.s1.form-control
+									option Normal
+									option Fixed Ratio
+									option Fixed Size
+								label Color
+								select.s2.form-control
+									option Black
+									option White
+									option Red
+									option Blue
+									option Yellow
+									option Gray
+									option Orange
+									option Green
+									option Purple
+								label Width
+								input(disabled).w.form-control
+								label Height
+								input(disabled).h.form-control
+						.media-settings
+							select.media-dropdown.form-control
+								option Image
+								option Video
+						#image
+							form(method="post" enctype="multipart/form-data")
+								input(disabled).media-input.form-control
+								input(type='file', accept='.png, .jpg, .jpeg, .gif' name="file-dialog" style='display:none;').file-dialog
+								button(type="button").btn.btn-success.btn-select Select
+								button(type="submit").btn.btn-primary.btn-upload Upload
+						#video
+							form(method="post" enctype="multipart/form-data")
+								input.media-input.form-control(placeholder='enter a youtube or vimeo url')
+								button(type="submit").btn.btn-success.btn-save-video Save
+
+		//- pushpop modal delete //
+
+		.modal.fade.modal-pop
+			.modal-dialog
+				.modal-content
+					.modal-header
+						button.close(type='button', data-dismiss='modal', aria-label='Close')
+							span(aria-hidden='true') ×
+						h4.modal-title View / Delete
+					.modal-body
+						.well
+							.media-preview
+								img
+								iframe(frameborder='0', webkitAllowFullScreen, mozallowfullscreen, allowFullScreen)
+					.modal-footer
+						form(method="post" enctype="multipart/form-data")
+							button(type='button', data-dismiss='modal', aria-label='Cancel').btn.btn-default Cancel
+							button(type='submit').btn.btn-danger Delete
+
+
+		script(src='/javascripts/jquery-2.1.4.min.js')
+		script(src='/javascripts/bootstrap.min.js')
+		script(src='/javascripts/jquery.form.min.js')
+		script(src='/javascripts/pushpop.min.js')
+		script.
+			var pushpop = new PushPop();
+			$('.btn').click(function(){
+				pushpop.openPushModal();
+			})
+
+

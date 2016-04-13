@@ -1,23 +1,25 @@
 
-//var pushpop = require('../../pushpop-npm/index');
+var path = require('path');
+//var pushpop = require('../../npm-module/index');
 var pushpop = require('pushpop');
-// overwrite file names with unique ids //
-pushpop.uniqueIds(true);
-// enable verbose logging //
-pushpop.verboseLogs(true);
-// local upload directory is relative to project root //
-pushpop.uploadTo('uploads');
-// use mongodb as the database //
-pushpop.database('mongo');
-// save files to gcloud instead of the local filesystem //
-// pushpop.service('gcloud', 'pushpop');
+
+pushpop.config({
+// [required] set the global upload directory //
+	uploads:path.join(__dirname, '..', '/uploads'),
+// [optional] overwrite file names with unique ids //
+	uniqueIds:true,
+// [optional] enable logging //
+	enableLogs:true,
+// [optional] save files to gcloud instead of the local filesystem //
+//	service: { name:'gcloud', bucket:'pushpop'}
+})
 
 module.exports = function(app) {
 
 	app.get('/', function (req, res)
 	{	
-		res.render('index')
-		//res.sendfile(__dirname + '/index.html')
+		res.render('pushpop-modal.pug')
+		//res.sendfile(__dirname + '/pushpop-modal.html')
 	});
 
 	app.post('/upload', pushpop.upload, function(req, res)

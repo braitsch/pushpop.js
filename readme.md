@@ -49,7 +49,13 @@ To add **pushpop.js** to an existing project:
 
 	**pushpop** uses a very small subset of [Twitter Bootstrap](http://getbootstrap.com/) to render the modal windows and the [jQuery Form Plugin](http://malsup.com/jquery/form/) to handle the image uploads. 
 
+3. Add the Modal window markup to your HTML files. The markup is also provided as a [pug / jade template](https://github.com/pugjs/pug) for convenience.
+	
+	* /sample-app/server/pushpop-modal.html
+	* /sample-app/server/pushpop-modal.pug
+
 3. Require & configure the **pushpop** middleware on your server as explained next.
+
 
 ##Middleware
 
@@ -72,28 +78,23 @@ To handle an incoming upload simply add the middleware to your ``POST`` request 
 
 ##Configuration
 
-**pushpop** provides a few configuration methods that will help you to tailor it to your needs.
+Before you can use **pushpop** you need to first tell it where you want it to save your uploaded images & thumbnails. In addition to that you can enable a few other features as noted below:
 
-* Set the local directory where uploads are saved
-
-		pushpop.uploadTo('uploads');
-
-* Overwrite the incoming file name with a [global unique identifier](https://en.wikipedia.org/wiki/Globally_unique_identifier)
-
-		pushpop.uniqueIds(true);
-
-* Set the default database (currently only Mongo is supported)
-
-		pushpop.database('mongo');
-
-* Save files to Google Cloud Storage instead of the local filesystem
-
-		pushpop.service('gcloud', 'pushpop');
-
-* Enable verbose logging
-
-		pushpop.verboseLogs(true);
-
+	var pushpop = require('pushpop');
+	
+	pushpop.config({
+	// [required] set the global upload directory //
+		uploads:path.join(__dirname, '..', '/uploads'),
+		
+	// [optional] overwrite the incoming file name with a [global unique identifier](https://en.wikipedia.org/wiki/Globally_unique_identifier)
+		uniqueIds:true,
+		
+	// [optional] enable logging //
+		enableLogs:true,
+		
+	// [optional] save files to gcloud instead of the local filesystem //
+		service: { name:'gcloud', bucket:'pushpop'}
+	});
 
 ##MongoDB
 
@@ -137,4 +138,4 @@ If you're running on [Heroku](https://www.heroku.com/) you'll need to convert th
 
 ##Contributing
 
-// todo //
+Questions, feedback, feature requests and ideas for improvement are all very much welcome. Please open an [issue](https://github.com/braitsch/pushpop.js/issues) to help facilitate a community discussion instead of sending me an email.

@@ -25,53 +25,28 @@ var exec = require('child_process').exec;
 var Busboy = require('busboy');
 var guid = function(){return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {var r = Math.random()*16|0,v=c=='x'?r:r&0x3|0x8;return v.toString(16);});}
 
-var db, service;
-var settings = {
-	uniqueIds:true,
-	verboseLogs:false,
-	uploads:'uploads',
-	pName:'my-project',
-}
+var db, service, settings = { pName : 'gallery'};
 
 /*
-	setup methods 
+	configuration
 */
 
-exports.uniqueIds = function(ok)
+exports.config = function(flags)
 {
-	settings.uniqueIds = ok;
-}
-
-exports.verboseLogs = function(ok)
-{
-	settings.verboseLogs = ok;
-}
-
-exports.uploadTo = function(dir)
-{
-	settings.uploads = dir;
-	settings.uploads = path.join(__dirname, '..', settings.uploads);
-	checkDirectoryExists(settings.uploads);
-}
-
-exports.database = function(db_name)
-{
-	db_name = db_name.toLowerCase();
-	if (db_name == 'mongo'){
-		db = require('./dbs/mongo')(log);
-	}	else{
-		log('local :: unknown database : ', db_name);
+	settings.uploads = flags.uploads;
+	ensureDirectoryExists(settings.uploads);
+	settings.uniqueIds = flags.uniqueIds || true;
+	settings.enableLogs = flags.enableLogs || true;
+	if (flags.service){
+		service_name = flags.service.name.toLowerCase();
+		if (service_name == 'gcloud'){
+			service = require('./services/gcloud')(flags.service.bucket, log);
+		}	else{
+			log('local :: unknown service : ', flags.service.name);
+		}
 	}
-}
-
-exports.service = function(service_name, bucket)
-{
-	service_name = service_name.toLowerCase();
-	if (service_name == 'gcloud'){
-		service = require('./services/gcloud')(bucket, log);
-	}	else{
-		log('local :: unknown service : ', service_name);
-	}
+	db = require('./dbs/mongo')(log);
+	settings.pDirectory = settings.uploads + '/' + settings.pName;
 }
 
 /*
@@ -84,7 +59,7 @@ exports.setProject = function(pName, cback)
 // update the local upload destination //
 	settings.pDirectory = settings.uploads + '/' + settings.pName;
 // and always ensure directory exists before we attempt to write to it //
-	checkDirectoryExists(settings.pDirectory);
+	ensureDirectoryExists(settings.pDirectory);
 // get the requested project from the database //
 	db.get(pName, cback);
 }
@@ -111,6 +86,7 @@ exports.upload = function(req, res, next)
 		req.media.type = 'image';
 		req.media.name = getFileName(filename);
 		req.media.ext = getFileType(filename);
+		ensureDirectoryExists(settings.pDirectory);
 		var fstream = fs.createWriteStream(settings.pDirectory + '/' + req.media.name + req.media.ext);
 		file.pipe(fstream);
 	});
@@ -277,7 +253,7 @@ var getFileType = function(name)
 	return name.substr(name.lastIndexOf('.'));
 }
 
-var checkDirectoryExists = function(dir)
+var ensureDirectoryExists = function(dir)
 {
 	if (!fs.existsSync(dir)) { log('local :: creating directory', dir); fs.mkdirSync(dir); }
 }
@@ -286,7 +262,7 @@ var log = function()
 {
 	var str = '';
 	for(p in arguments) str += arguments[p] + ' ';
-	if (settings.verboseLogs) console.log('[ pushpop –– ' + str + ' ]');
+	if (settings.enableLogs) console.log('[ pushpop –– ' + str + ' ]');
 }
 
 /*
