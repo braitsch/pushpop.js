@@ -8,62 +8,42 @@ A lightweight media manager and thumbnail generator for [Node.js](https://nodejs
 
 Image thumbnails are defined on the client within the modal window you see above and then sent to the server where they are processed and saved either to the local disk or one of the supported cloud storage solutions.
 
-Metadata about each image such as when it was created and any projects it may be associated with are automatically saved to a Mongo database.
+Metadata about each image such as when it was created and any projects it may be associated with are automatically saved to a [Mongo](https://www.mongodb.org/) database.
 
-**pushpop.js** was designed to be the media manager of your Node.js based CMS allowing you to easily upload images and generate custom thumbnails for them that fit the design of your site. It also supports linking in videos that are hosted on youtube or vimeo.
+**pushpop.js** was designed to be the media manager of your [Node.js](https://nodejs.org) based CMS allowing you to easily upload images and generate custom thumbnails for them that fit the design of your site. It also supports linking in videos that are hosted on YouTube or Vimeo.
 
 ##Installation
 
-**pushpop.js** is two parts, a client side package of JavaScript, CSS and HTML files and a [npm module](https://www.npmjs.com/package/pushpop) that runs on your Node server. 
+The repository includes a **sample-app** that you can use as a starting point for your project.
 
-The **sample app** included in this repository is a simple [Express](http://expressjs.com/) app that we'll use to show where everything lives and how the the client & server talk to one another. It's also a great starting point upon which to build your project.
+To run the **sample-app** first make sure [MongoDB](https://www.mongodb.org/) is installed & running on your system then:
 
+	git clone git@github.com:braitsch/pushpop.js.git
+	cd sample-app
+	npm install
+	node app
+	
+Fire up a browser window and point it at [localhost:3000](http://localhost:3000/)
 
-###Client Side
+---
 
-**pushpop** on the client uses a very small subset of [Twitter Bootstrap](http://getbootstrap.com/) to render the modal windows and the [jQuery Form Plugin](http://malsup.com/jquery/form/) to handle the image uploads. 
+To add **pushpop.js** to an existing project:
 
-These files are contained within ``/sample-app/public`` directory.
+1. Install the [npm module](https://www.npmjs.com/package/pushpop)
 
-**/sample-app/public/css**
+		npm install --save pushpop
 
-* bootstrap.min.css
-* pushpop.css
+2. Copy the client side JavaScript & CSS files in ``/sample-app/public`` to an appropriate location in your project.
 
-**/sample-app/public/javascripts**
+3. Require & configure the **pushpop** middleware on your server as explained next.
 
-* bootstrap.min.js
-* jquery-2.1.4.min.js
-* jquery.form.min.js
-* pushpop.js
+##Middleware
 
-Included in the root of the **sample-app** is a [gulp file](http://gulpjs.com/) that you can use to concat and minify all of these files into ``pushpop-min.js`` & ``pushpop-min.css`` files via:
+**pushpop** on the server is middleware that intercepts incoming ``POST`` requests that contain image data and generates a thumbnail from metadata contained in the request. It then saves both the source image and thumbnail to a local or remote location of your choosing.
 
-``gulp pushpop``
+To handle an incoming upload simply add the middleware to your ``POST`` request handler like so:
 
-The markup for the modal windows is provided as a [pug (formerly jade) template](https://github.com/pugjs/pug) as well as regular old HTML (``index.pug`` & ``index.html`` respectively). 
-
-These files are sent to the client from the server which we'll talk about next.
-
-###Server Side
-
-**pushpop** on the server is just an npm module that you can add to your project with:
-
-``npm install --save pushpop``
-
-This will install **pushpop** into your project's ``node_modules`` directory.
-
-Within ``/sample-app/server`` directory you'll see three files:
-
-* routes.js
-* index.pug
-* index.html
-
-``index.pug`` & ``index.html`` just contain the markup for the modal windows which will be sent to the client whenever it is requested.
-
-``routes.js`` is where we'll tell our ``POST`` request handlers to use the **pushpop** middleware to process and save our incoming image uploads so let's take a look at that first.
-
-As you can see in `routes.js` the **pushpop** middleware provides two POST request handlers: ``pushpop.upload`` & ``pushpop.delete``.
+**/sample-app/server/routes.js**
 
 	var pushpop = require('pushpop');
 
@@ -76,29 +56,64 @@ As you can see in `routes.js` the **pushpop** middleware provides two POST reque
 		}
 	});
 
-	app.post('/delete', pushpop.delete, function(req, res)
-	{
-		if (!pushpop.error){
-			res.send('ok').status(200);
-		}	else{
-			res.send(pushpop.error).status(500);
-		}
-	});
-
-When an image is sent to ``/upload`` the **pushpop** middleware intercepts the request, generates the thumbnail from data contained in the ``POST`` request and then saves both the thumbnail and source image to the local ``/uploads`` directory.
-
-##Sample App
-
-// todo //
-
 ##Configuration
 
-// todo //
+**pushpop** provides a few configuration methods that will help you to tailor it to your needs.
 
-##Datastores
+* Set the local directory where uploads are saved
 
-* [MongoDB](https://www.mongodb.org/)
-* [Google Cloud Storage](cloud.google.com/storage)
+		pushpop.uploadTo('uploads');
+
+* Overwrite the incoming file name with a [global unique identifier](https://en.wikipedia.org/wiki/Globally_unique_identifier)
+
+		pushpop.uniqueIds(true);
+
+* Set the default database (currently only Mongo is supported)
+
+		pushpop.database('mongo');
+
+* Save files to Google Cloud Storage instead of the local filesystem
+
+		pushpop.service('gcloud', 'pushpop');
+
+* Enable verbose logging
+
+		pushpop.verboseLogs(true);
+
+
+##MongoDB
+
+**pushpop** uses environment variables to connect to your database instance:
+
+	process.env.DB_NAME || 'pushpop';
+	process.env.DB_HOST || 'localhost';
+	process.env.DB_PORT || 27017;
+
+If you need to authenticate be sure to also set:
+
+	process.env.DB_USER || 'braitsch' 
+	process.env.DB_PASS	|| '1234'
+
+##Google Cloud Storage
+
+You can save your images to your GCS account by telling **pushpop** to use the ``gloud`` service passing in the name of your bucket as the second parameter.
+
+	pushpop.service('gcloud', 'pushpop');
+
+**pushpop** also uses environment variables to connect to your GCS account:
+
+	process.env.GCLOUD_PROJECT = 'grape-spaceship-123'
+	process.env.GCLOUD_KEY_FILE = '/path/to/keyfile.json'
+
+If you're running on [Heroku](https://www.heroku.com/) you'll need to convert the contents of your keyfile into a string and then set that string as a separate ``GCLOUD_JSON`` environment variable.
+
+	process.env.GCLOUD_JSON = '{
+		"private_key_id": "...",
+		"private_key": "...",
+		"client_email": "...",
+		"client_id": "...",
+		"type": "service_account"
+	}'	
 
 ##Coming Soon
 
