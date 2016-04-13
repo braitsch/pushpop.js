@@ -8,9 +8,12 @@
     "url": "git@github.com:braitsch/pushpop.js.git"
   },
   "dependencies": {
+    "body-parser": "^1.15.0",
+    "cron": "^1.1.0",
     "express": "^4.13.4",
-    "pug": "^0.1.0",
-    "pushpop": "0.0.2"
+    "jade": "^1.11.0",
+    "pushpop": "0.0.2",
+    "stripe": "^4.4.0"
   },
   "engines": {
     "node": "4.2.1"
