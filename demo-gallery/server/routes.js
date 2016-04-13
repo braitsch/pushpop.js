@@ -1,4 +1,5 @@
 
+//var pushpop = require('../../pushpop-npm/index');
 var pushpop = require('pushpop');
 // overwrite file names with unique ids //
 pushpop.uniqueIds(true);

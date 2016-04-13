@@ -1,6 +1,6 @@
 .DS_Store
-node_modules
-uploads/*
-!uploads/.gitkeep
-public/css/.sass-cache/
-public/css/*.map
+*/uploads/*
+*/!uploads/.gitkeep
+*/public/css/.sass-cache/
+*/public/css/*.map
+*/node_modules
