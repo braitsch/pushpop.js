@@ -81,19 +81,19 @@ Additionally you can limit the size of uploads (as is done in the [live demo](ht
 		maxFileSize = 5; // limit image uploads to 5 megabytes
 	});
 
-By default no file limit size is imposed by the library.
+By default no file size limit is imposed by the library.
 
 ###Server
 
-Configuration on the server is simply a matter of requiring the module and telling it where you want to save your uploaded files. You do this by passing an object that to the ``config`` method.
+Configuration on the server is simply a matter of requiring the module and telling it where you want to save your uploaded images. You do this by passing your settings to the ``config`` method.
 
 	var pushpop = require('pushpop');
 	
 	pushpop.config({
 	// [required] set the global upload directory //
-		uploads:path.join(__dirname, '..', '/uploads'),
+		uploads:'./uploads',
 		
-	// [optional] overwrite the incoming file name with a [global unique identifier](https://en.wikipedia.org/wiki/Globally_unique_identifier)
+	// [optional] overwrite the incoming file name with a global unique identifier
 		uniqueIds:true,
 		
 	// [optional] enable logging //
@@ -117,7 +117,7 @@ Typically you'll want to display the modal **push** window as the result of some
 		pushpop.showModalPush();
 	});
 
-When an image is uploaded metadata is captured that describes details about the image:
+When an image is uploaded (or a video is saved) metadata is generated that describes the asset:
 
 	metadata = {
 		type: 'image', // this can also be 'video' //
@@ -128,7 +128,7 @@ When an image is uploaded metadata is captured that describes details about the 
 		date: '2016-04-13T23:55:42.104Z',
 	}
 
-This metadata is saved in a database collection and is sent back to the client whenever the containing project, in this case ``my-portfolio`` is requested.
+This metadata is saved in the database sent back to the client whenever the containing project, in this case ``my-portfolio`` is requested.
 
 ###Projects
 
