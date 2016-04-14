@@ -2,7 +2,7 @@
 
 A lightweight media manager and thumbnail generator for [Node.js](https://nodejs.org)
 
-![pushpop-modal](./readme.img/pushpop-modal.png?raw=true)
+[![pushpop-modal](./readme.img/pushpop-modal.png?raw=true)](http://pushpop.herokuapp.com)
 
 **pushpop.js** is a client & server package that makes it easy to generate custom image thumbnails using a marquee/crop tool similar to the one in Photoshop.
 
@@ -49,13 +49,142 @@ To add **pushpop.js** to an existing project:
 
 	**pushpop** uses a very small subset of [Twitter Bootstrap](http://getbootstrap.com/) to render the modal windows and the [jQuery Form Plugin](http://malsup.com/jquery/form/) to handle the image uploads. 
 
-3. Add the Modal window markup to your HTML files. The markup is also provided as a [pug / jade template](https://github.com/pugjs/pug) for convenience.
+3. Add the Modal window markup to your HTML files. The markup is also provided as a [pug / jade template](https://github.com/pugjs/pug) for convenience. In the **sample-app** the markup files are located in the server directory.
 	
 	* /sample-app/server/pushpop-modal.html
 	* /sample-app/server/pushpop-modal.pug
 
-3. Require & configure the **pushpop** middleware on your server as explained next.
 
+##Configuration
+
+###Client
+
+To add the client library to your project simply add the following line of JavaScript to your HTML after you've included the pushpop.js file:
+
+	<script src="pushpop.js"></script>
+	<script>
+		var pushpop = new pushpop();
+	</script>
+
+By default uploads will be sent to ``http://yoursite.com/upload`` & requests to delete content will be sent to ``http://yoursite.com/delete``. You can change this by overriding the default API endpoints:
+
+	var pushpop = new pushpop({
+		api:{
+			upload:'/some-url/api/upload',
+			delete:'/some-url/api/delete',
+		}
+	});
+	
+Additionally you can limit the size of uploads (as is done in the [live demo](http://pushpop.herokuapp.com)) by passing in a limit size in megabytes.
+	
+	var pushpop = new pushpop({
+		maxFileSize = 5; // limit image uploads to 5 megabytes
+	});
+
+By default no file limit size is imposed by the library.
+
+###Server
+
+Configuration on the server is simply a matter of requiring the module and telling it where you want to save your uploaded files. You do this by passing an object that to the ``config`` method.
+
+	var pushpop = require('pushpop');
+	
+	pushpop.config({
+	// [required] set the global upload directory //
+		uploads:path.join(__dirname, '..', '/uploads'),
+		
+	// [optional] overwrite the incoming file name with a [global unique identifier](https://en.wikipedia.org/wiki/Globally_unique_identifier)
+		uniqueIds:true,
+		
+	// [optional] enable logging //
+		enableLogs:true,
+		
+	// [optional] save files to gcloud instead of the local filesystem //
+		service: { name:'gcloud', bucket:'pushpop'}
+	});
+
+##Basic Usage
+
+The **pushpop.js** client library provides two Modal windows that allow you to upload (push) images & thumbnails to your server as well as delete (pop) them off later if desired.
+
+* pushpop-modal-push
+* pushpop-modal-pop
+
+Typically you'll want to display the modal **push** window as the result of some user generated event like a button click:
+
+	var pushpop = new pushpop();
+	$('#add-new-image-button').click(function(){
+		pushpop.showModalPush();
+	});
+
+When an image is uploaded metadata is captured that describes details about the image:
+
+	metadata = {
+		type: 'image', // this can also be 'video' //
+		name: '47f62ee9-5164-4681-8d06-2a515a237997',
+		format: '.png',
+		host: 'localhost',
+		project: 'my-portfolio',
+		date: '2016-04-13T23:55:42.104Z',
+	}
+
+This metadata is saved in a database collection and is sent back to the client whenever the containing project, in this case ``my-portfolio`` is requested.
+
+###Projects
+
+**pushpop** groups your media assets together into containers called ``projects``
+
+The default project is called ``gallery`` although you can easily change this to anything you want by calling:
+
+	pushpop.setProject('client-review');
+
+All assets saved after a call to ``setProject`` will have the new project name saved in their metadata.
+
+A trival way to change the project could be by hitting a URL with the project name, for example:
+
+	app.get('/project/:id', function(req, res)
+	{
+		pushpop.setProject(req.params['id'], function(project){
+			res.render('gallery', { project : project });
+		});
+	});	
+
+
+To build a page of assets from a given project simply call ``getProject`` passing in the name of the project you wish to display.
+
+	app.get('/', function(req, res)
+	{
+		pushpop.getProject('gallery', function(project){
+			res.render('gallery', { project : project });
+		});
+	});	
+
+This will return an array of metadata objects that all have the project's name as their ``project`` field.
+
+You use this metadata to generate your HTML, for example:
+
+	// psuedocode //
+	for(var i=0; i<project.length; i++){
+		var image = project[i];
+		<img src=image.host+'/'+image.name+'.'+image.format />
+	}
+
+
+You'll also need to save this metadata and pass it along to the modal **pop** window in the event that you ever wish to delete it.
+
+	// psuedocode //
+	for(var i=0; i<project.length; i++){
+		var image = project[i];
+		var url = image.host+'/'+image.name+'.'+image.format;
+		<img src=url data-meta=image />
+	}
+
+Then when we click on an image we can bring up the `pop` modal window and give the user the option to delete it.
+
+	// psuedocode //
+	$(img).click(function(){
+		pushpop.showModalPop(this.data('meta'));
+	})
 
 ##Middleware
 
@@ -76,25 +205,6 @@ To handle an incoming upload simply add the middleware to your ``POST`` request 
 		}
 	});
 
-##Configuration
-
-Before you can use **pushpop** you need to first tell it where you want it to save your uploaded images & thumbnails. In addition to that you can enable a few other features as noted below:
-
-	var pushpop = require('pushpop');
-	
-	pushpop.config({
-	// [required] set the global upload directory //
-		uploads:path.join(__dirname, '..', '/uploads'),
-		
-	// [optional] overwrite the incoming file name with a [global unique identifier](https://en.wikipedia.org/wiki/Globally_unique_identifier)
-		uniqueIds:true,
-		
-	// [optional] enable logging //
-		enableLogs:true,
-		
-	// [optional] save files to gcloud instead of the local filesystem //
-		service: { name:'gcloud', bucket:'pushpop'}
-	});
 
 ##MongoDB
 
