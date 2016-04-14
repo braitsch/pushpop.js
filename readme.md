@@ -159,11 +159,11 @@ To build a page of assets from a given project simply call ``getProject`` passin
 		});
 	});	
 
-This will return an array of metadata objects that all have the project's name as their ``project`` field.
+This will return an array of metadata objects that all have their ``project`` field set to **"gallery"**.
 
 You use this metadata to generate your HTML, for example:
 
-	// psuedocode //
+	// pseudocode //
 	for(var i=0; i<project.length; i++){
 		var image = project[i];
 		<img src=image.host+'/'+image.name+'.'+image.format />
@@ -172,7 +172,7 @@ You use this metadata to generate your HTML, for example:
 
 You'll also need to save this metadata and pass it along to the modal **pop** window in the event that you ever wish to delete it.
 
-	// psuedocode //
+	// pseudocode //
 	for(var i=0; i<project.length; i++){
 		var image = project[i];
 		var url = image.host+'/'+image.name+'.'+image.format;
@@ -181,7 +181,7 @@ You'll also need to save this metadata and pass it along to the modal **pop** wi
 
 Then when we click on an image we can bring up the `pop` modal window and give the user the option to delete it.
 
-	// psuedocode //
+	// pseudocode //
 	$(img).click(function(){
 		pushpop.showModalPop(this.data('meta'));
 	})
@@ -205,6 +205,14 @@ To handle an incoming upload simply add the middleware to your ``POST`` request 
 		}
 	});
 
+	app.post('/delete', pushpop.delete, function(req, res)
+	{
+		if (!pushpop.error){
+			res.send('ok').status(200);
+		}	else{
+			res.send(pushpop.error).status(500);
+		}
+	});
 
 ##MongoDB
 
