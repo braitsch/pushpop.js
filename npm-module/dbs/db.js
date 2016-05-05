@@ -5,23 +5,27 @@
 
 var db = function(bucketName, logFunc) 
 {
-	this.get = function()
+	this.getMediaById = function(id, cback)
 	{
 		
 	}
-	this.getAll = function()
+	this.getMediaInProject = function(pName, cback)
 	{
 
 	}
-	this.save = function()
+	this.getAll = function(cback)
 	{
 
 	}
-	this.delete = function()
+	this.save = function(nMedia, cback)
 	{
 
 	}
-	this.reset = function()
+	this.delete = function(id, cback)
+	{
+
+	}
+	this.reset = function(cback)
 	{
 
 	}

@@ -15,7 +15,7 @@ var mongo = function(log)
 	var dbPort = process.env.DB_PORT || 27017;
 
 	var db = new MongoDB(dbName, new Server(dbHost, dbPort, {auto_reconnect: true}), {w: 1});
-	var projects = db.collection('projects');
+	var media = db.collection('media');
 
 	db.open(function(e, d){
 		if (e) {
@@ -40,51 +40,37 @@ var mongo = function(log)
 		public methods
 	*/
 
-	this.get = function(pName, cback)
+	this.getMediaById = function(id, cback)
 	{
-	// get the requested project if it exists //
-		projects.findOne({ name:pName }, function(e, project){
-			if (project){
-				cback(project);
-			}	else{
-		// otherwise return a new empty project //
-				var project = getNewProjectObject(pName);
-				projects.insert(project, { safe:true }, function(e, result){
-					cback(project);
-				});
-			}
-		});
+	// get a single media object by its id //
+		media.findOne({ _id:new ObjectId(id) }, function(e, obj){ cback(obj); });
 	}
+
+	this.getMediaInProject = function(pName, cback)
+	{
+	// get all media associated with the requested project //
+		media.find({ project:pName }).sort({'date':-1,'name':1}).toArray(function(e, a) { cback(a); });
+	} 
 
 	this.getAll = function(cback)
 	{
-		projects.find({ }).sort({'date':-1,'name':1}).toArray(function(e, a) { cback(a); });
+		media.find({ }).sort({'date':-1,'name':1}).toArray(function(e, a) { cback(a); });
 	}
 
-	this.save = function(project, cback)
+	this.save = function(nMedia, cback)
 	{
-	// sort media by date created //
-		project.media.sort(function(a, b){ return a.date < b.date; });
-		projects.save(project, { safe:true }, cback);
+		nMedia.date = new Date();
+		media.save(nMedia, { safe:true }, cback);
 	}
 
-	this.delete = function(project, cback)
+	this.delete = function(id, cback)
 	{
-		projects.remove({ _id:new ObjectId(project) }, cback);
+		media.remove({ _id:new ObjectId(id) }, cback);
 	}
 
 	this.reset = function(cback)
 	{
-		projects.remove({}, cback);
-	}
-
-	var getNewProjectObject = function(pName)
-	{
-		return {
-			name : pName,
-			media : [],
-			last_updated : new Date() 
-		}
+		media.remove({}, cback);
 	}
 }
 

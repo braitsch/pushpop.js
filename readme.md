@@ -120,15 +120,24 @@ Typically you'll want to display the modal **push** window as the result of some
 When an image is uploaded (or a video is saved) metadata is generated that describes the asset:
 
 	metadata = {
-		type: 'image', // this can also be 'video' //
-		name: '47f62ee9-5164-4681-8d06-2a515a237997',
-		format: '.png',
-		host: 'localhost',
-		project: 'my-portfolio',
+		type: 'image',
+		project: 'portfolio',
+		image: '47f62ee9-5164-4681-8d06-2a515a237997.png',
+		preview: '47f62ee9-5164-4681-8d06-2a515a237997_sm.png',
+		host: 'https://storage.googleapis.com/my-bucket',
+		date: '2016-04-13T23:55:42.104Z',
+	}
+	
+	metadata = {
+		type: 'video',
+		project: 'portfolio',
+		video: 'https://player.vimeo.com/video/158160346',
+		preview: 'https://i.vimeocdn.com/video/559617660_640.jpg',
 		date: '2016-04-13T23:55:42.104Z',
 	}
 
-This metadata is saved in the database sent back to the client whenever the containing project, in this case ``my-portfolio`` is requested.
+This metadata is saved and sent back to the client whenever an asset is requested.
+
 
 ###Projects
 

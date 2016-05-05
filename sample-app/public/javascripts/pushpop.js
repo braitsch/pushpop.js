@@ -61,25 +61,25 @@ function PushPop(config)
 		and these are your two public methods
 	*/
 
-	this.openPopModal = function(target)
-	{
-		$modalPop.data('index', $(target).data('index'));
-		$modalPop.data('pname', $(target).data('pname'));
-		var $imagePreview = $('.modal-pop .media-preview img');
-		var $videoPreview = $('.modal-pop .media-preview iframe')
-		if ($(target).data('media').type == 'image'){
-			$imagePreview.show();
-			$imagePreview.attr('src', $(target).data('url'));
-		}	else if ($(target).data('media').type == 'video'){
-			$videoPreview.show();
-			$videoPreview.attr('src', $(target).data('url'));
-		}
-		$modalPop.modal('show');
-	}
-
 	this.openPushModal = function()
 	{
 		$modalPush.modal('show');
+	}
+
+	this.openPopModal = function(target)
+	{
+		var meta = $(target).data('meta');
+		$modalPop.data('id', meta._id);
+		var $imagePreview = $('.modal-pop .media-preview img');
+		var $videoPreview = $('.modal-pop .media-preview iframe')
+		if (meta.type == 'image'){
+			$imagePreview.show();
+			$imagePreview.attr('src', meta.host+'/'+meta.project+'/'+meta.image);
+		}	else if (meta.type == 'video'){
+			$videoPreview.show();
+			$videoPreview.attr('src', meta.video);
+		}
+		$modalPop.modal('show');
 	}
 
 	/*
@@ -197,7 +197,6 @@ function PushPop(config)
 		},
 		success: function() {
 			$('.progress-bar').width('100%');
-			console.log('success');
 		},
 		complete: function(xhr) {
 			$('.progress-bar').width('100%');
@@ -225,7 +224,6 @@ function PushPop(config)
 	videoForm.ajaxForm({
 		url: api.upload,
 		beforeSubmit: function(formData, jqForm, options) {
-			console.log('sending');
 			formData.push({name:'type', value:'video'});
 			formData.push({name:'url', value:video.url});
 			formData.push({name:'preview', value:video.preview});
@@ -404,8 +402,7 @@ function PushPop(config)
 	$('.modal-pop form').ajaxForm({
 		url: api.delete,
 		beforeSubmit: function(formData, jqForm, options) {
-			formData.push({name:'pname', value:$modalPop.data('pname')});
-			formData.push({name:'index', value:$modalPop.data('index')});
+			formData.push({name:'id', value:$modalPop.data('id')});
 		},
 		complete: function(xhr) {
 			setTimeout(closeModalPopAndReloadPage, 500);

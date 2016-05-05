@@ -18,8 +18,9 @@ module.exports = function(app) {
 
 	app.get('/', function (req, res)
 	{	
-		res.render('pushpop-modal.pug')
-		//res.sendfile(__dirname + '/pushpop-modal.html')
+		pushpop.getAll(function(media){
+			res.render('pushpop-modal', { media : media });
+		});
 	});
 
 	app.post('/upload', pushpop.upload, function(req, res)
@@ -38,6 +39,18 @@ module.exports = function(app) {
 		}	else{
 			res.send(pushpop.error).status(500);
 		}
+	});
+
+	app.get('/print', function(req, res){
+		pushpop.getAll(function(media){
+			res.send({ media : media });
+		});
+	});
+
+	app.get('/reset', function(req, res){
+		pushpop.reset(function(){
+			res.redirect('/');
+		});
 	});
 
 	app.get('*', function(req, res){

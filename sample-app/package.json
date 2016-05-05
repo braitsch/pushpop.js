@@ -1,6 +1,6 @@
 {
   "name": "pushpop.js",
-  "version": "0.0.1",
+  "version": "0.0.4",
   "description": "A lightweight & scalable media management system for Node.js",
   "author": "Stephen Braitsch <stephen@braitsch.io>",
   "repository": {
@@ -10,7 +10,7 @@
   "dependencies": {
     "express": "^4.13.4",
     "pug": "^0.1.0",
-    "pushpop": "0.0.2"
+    "pushpop": "0.0.4"
   },
   "engines": {
     "node": "4.2.1"
