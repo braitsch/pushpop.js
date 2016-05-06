@@ -17,7 +17,7 @@ html
 		- for (var i=0; i<media.length; i++) {
 			- var data = media[i];
 			div(style='margin:80px 20px;')
-				.item(data-meta=data, style='margin:2px;padding:2px;float:left;border:1px solid black;')
+				.media(data-meta=data, style='margin:2px;padding:2px;float:left;border:1px solid black;')
 					- if (data.type == 'image'){
 						img(src=data.host+'/'+data.project+'/'+data.preview, style='width:200px;')
 					- }	else if (data.type == 'video'){
@@ -109,6 +109,6 @@ html
 			$('#open').click(function(){
 				pushpop.openPushModal();
 			});
-			$('.item').click(function(){
+			$('.media').click(function(){
 				pushpop.openPopModal(this);
 			});

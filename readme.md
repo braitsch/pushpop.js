@@ -6,9 +6,9 @@ A lightweight media manager and thumbnail generator for [Node.js](https://nodejs
 
 **pushpop.js** allows you to upload images and generate custom thumbnails for them using a marquee/crop tool similar to the one found in Photoshop.
 
-Image thumbnails are defined within the modal window you see above and are then sent to the server where they are processed and saved to the local disk or one of the supported cloud storage providers.
+Image thumbnails are defined within the modal window you see above and are then sent to the server where they are processed and saved to the local disk or one of the supported [cloud storage providers](#cloud-services).
 
-Metadata about each image (or video) such as when it was created and any projects it may be associated with are automatically saved to a [Mongo](https://www.mongodb.org/) database.
+Metadata about each image such as when it was created and any projects it may be associated with are automatically saved to a [Mongo](https://www.mongodb.org/) database. You can also save videos hosted on YouTube & Vimeo.
 
 ##Getting Started
 	
@@ -58,7 +58,7 @@ To add **pushpop.js** to an existing project:
 
 	**pushpop** uses a very small subset of [Twitter Bootstrap](http://getbootstrap.com/) to render the modal windows and the [jQuery Form Plugin](http://malsup.com/jquery/form/) to handle the image uploads. 
 
-3. Add the modal window markup & JS hooks to your HTML files. The markup is also provided as a [pug / jade template](https://github.com/pugjs/pug) for convenience. In the **sample-app** the markup files are located in the server directory.
+3. Add the modal window markup & [JS hooks](#basic-usage) to your HTML files. The markup is also provided as a [pug (jade) template](https://github.com/pugjs/pug) for convenience. In the **sample-app** the markup files are located in the server directory.
 	
 	* /sample-app/server/pushpop.html
 	* /sample-app/server/pushpop.pug
@@ -67,23 +67,23 @@ To add **pushpop.js** to an existing project:
 
 ###Client
 
-Instantiate an instance of **pushpop.js** by adding the following line of JavaScript to your HTML after you've included the client library:
+Instantiate a new instance of **pushpop.js** by adding the following line of JavaScript to your HTML after you've included the client library:
 
 	<script src="pushpop.min.js"></script>
 	<script>
-		var pushpop = new pushpop();
+		var pushpop = new PushPop();
 	</script>
 
 By default uploads will be sent to ``http://yoursite.com/upload`` & requests to delete content will be sent to ``http://yoursite.com/delete``. You can change this by overriding the default API endpoints:
 
 	var pushpop = new pushpop({
 		api:{
-			upload:'/some-url/api/upload',
-			delete:'/some-url/api/delete',
+			upload:'/api/upload',
+			delete:'/api/delete',
 		}
 	});
 	
-Additionally you can limit the size of uploads (as is done in the [live demo](http://pushpop.herokuapp.com)) by passing in a limit size in megabytes.
+Additionally you can limit the size of uploads (as is done in the [live demo](http://pushpop.herokuapp.com)) by passing in a limit in megabytes.
 	
 	var pushpop = new pushpop({
 		maxFileSize = 5; // limit image uploads to 5 megabytes
@@ -110,6 +110,8 @@ Configuration on the server is simply a matter of requiring the module and telli
 	// [optional] save files to gcloud instead of the local filesystem //
 		service: { name:'gcloud', bucket:'pushpop'}
 	});
+	
+**Tip:** See the [Cloud Services](#cloud-services) section for info on how to connect **pushpop** to your Google Cloud Storage account.
 
 ##<a name="basic-usage"></a>Basic Usage
 
@@ -118,18 +120,18 @@ The **pushpop.js** client library provides two modal windows that allow you to u
 * ``pushpop.openPushModal();``
 * ``pushpop.openPopModal(target);``
 
-To display the **push** window simply tell pushpop to show the window when an event is triggered such as a button click.
+To display the **push** window simply tell **pushpop** to show it whenever an event is triggered such as a button click.
 
 	var pushpop = new pushpop();
 	$('#add-new-item').click(function(){
 		pushpop.openPushModal();
 	});
 	
-This will display the **push** window that will allow you to upload an image and define a thumbnail for it or save a video url to the database.
+This will display the **push** window that will allow you to upload an image and define a thumbnail for it or save a video to the database.
 
 [![pushpop-modal](./readme.img/pushpop-modal.png?raw=true)](http://pushpop.herokuapp.com)
 
-pushpop.js also provides a **pop** window that allows you to delete anything you've previous saved.
+**pushpop** also provides a **pop** window that allows you to delete anything you've previous saved.
 
 	var pushpop = new pushpop();
 	$('#add-new-item-button').click(function(){
@@ -141,7 +143,7 @@ pushpop.js also provides a **pop** window that allows you to delete anything you
 
 [![pushpop-modal](./readme.img/pushpop-modal-pop.png?raw=true)](http://pushpop.herokuapp.com)
 
-The ``openPopModal`` function takes a reference to the DOM element that you want to view and potentially delete. This DOM element should have a ``data-attribute`` named ``meta`` that describes the asset as discussed in the next section.
+The ``openPopModal`` function takes a reference to the DOM element that contains the media asset that you want to view. This DOM element should have a ``data-attribute`` named ``meta`` that describes the asset as discussed next.
 
 ##<a name="metadata"></a>Metadata
 
@@ -173,19 +175,20 @@ This metadata is saved and sent back to the client whenever an asset or collecti
 		});
 	});
 
-The metadata for each asset requested is bundled into an array called ``media`` which you can iterate over to generate your HTML.
+The metadata for each asset is bundled into an array called ``media`` which you can iterate over to generate your HTML
 
 	for(var i=0; i<media.length; i++){
 		var data = media[i]; // metadata //
 		.media(data-meta=data)
 		if (asset.type == 'image'){
+		// assemble the preview url //
 			img(src=data.host+'/'+data.project+'/'+data.preview')
 		}	else if (data.type == 'video'){
 			img(src=data.preview')
 		}
 	}
 
-The above snippet will produce the following HTML for every media asset in the array.
+The above snippet will produce HTML similar to the following for every media asset in the array.
 
 	<div class="media" data-meta="{
 		type: 'image',
@@ -197,7 +200,7 @@ The above snippet will produce the following HTML for every media asset in the a
 		<img src="/gallery/b3e0e92b-4fb0-4bb4-86a5-2f61e1ea15f9_sm.jpg">
 	</div>
 	
-To view (and delete) an asset simply bind a click handler to your class that contains your preview images and pass the selected asset into the `openPopModal` function.
+To view (and delete) an asset simply bind a click handler to your class that contains your asset and pass it into the `openPopModal` function.
 
 	$('.media').click(function(){
 		pushpop.openPopModal(this);
@@ -213,30 +216,33 @@ The default project is called ``gallery`` although you can easily change this to
 
 All assets saved after a call to ``setProject`` will have the new project name saved in their metadata.
 
-A trival way to change the project could be by hitting a URL with the project name, for example:
+A simple way to change the project could be by hitting a URL with the project name, for example:
 
 	app.get('/project/:id', function(req, res)
 	{
-		pushpop.setProject(req.params['id'], function(project){
-			res.render('gallery', { project : project });
+		pushpop.setProject(req.params['id'], function(metadata){
+			res.render('gallery', { media : metadata });
 		});
 	});	
+	
+However if you're using **pushpop** within a CMS you'll want to bind the currently selected project to the logged in user and allow it to be changed only via a POST request:
+	
+	app.post('/set-project', function(req, res){
+		if (req.session.user == null){
+			res.redirect('/');
+		}	else{
+			req.session.project = req.body['project'];
+			pushpop.setProject(req.session.project, function(metadata){
+				res.render('gallery', { media : metadata });
+			});
+		}
+	});
 
-
-To build a page of assets from a given project simply call ``getProject`` passing in the name of the project you wish to display.
-
-	app.get('/', function(req, res)
-	{
-		pushpop.getProject('gallery', function(project){
-			res.render('gallery', { project : project });
-		});
-	});	
-
-This will return an array of metadata objects that all have their ``project`` field set to **"gallery"**.
+The array of metadata that is returned by ``setProject`` can be used to generate your HTML as explained above in the [Metadata](#metadata) section.
 
 ##<a name="server-api"></a>Server API
 
-**pushpop** on the server is middleware that intercepts incoming ``POST`` requests that contain image data and generates a thumbnail from metadata contained in the request. It then saves both the source image and thumbnail to a local or remote location of your choosing.
+**pushpop** on the server is middleware that intercepts incoming ``POST`` requests that contain image data and generates a thumbnail from information contained in the request. It then saves both the source image and thumbnail to a local or remote location of your choosing.
 
 To handle an incoming upload simply add the middleware to your ``POST`` request handler like so:
 
@@ -253,6 +259,8 @@ To handle an incoming upload simply add the middleware to your ``POST`` request 
 		}
 	});
 
+Adding a delete handler is as simple as:
+
 	app.post('/delete', pushpop.delete, function(req, res)
 	{
 		if (!pushpop.error){
@@ -262,9 +270,35 @@ To handle an incoming upload simply add the middleware to your ``POST`` request 
 		}
 	});
 
+**pushpop** also provides methods to set & retrieve the currently active project as well as reset the database.
+
+	pushpop.setProject(projectName, function(metadata){
+		res.render('gallery', { media : metadata });
+	});
+	
+	pushpop.getProject(projectName, function(metadata){
+		res.render('gallery', { media : metadata });
+	});
+
+
+To get every asset stored in the database:
+
+	pushpop.getAll(function(metadata){
+		res.render('pushpop', { media : metadata });
+	});
+	
+To delete all saved images & clear the database:
+
+	pushpop.reset(function(){
+		res.redirect('/');
+	});
+
+
 ##<a name="databases"></a>Databases
 
-**pushpop** uses environment variables to connect to your MongoDB instance:
+**pushpop** currently only supports MongoDB however support for Redis is in the works.
+
+To connect to your database instance set the following environment variables:
 
 	process.env.DB_NAME || 'pushpop';
 	process.env.DB_HOST || 'localhost';
@@ -277,9 +311,11 @@ If you need to authenticate be sure to also set:
 
 ##<a name="cloud-services"></a>Cloud Services
 
-You can save your images to your Google Cloud Storage account by telling **pushpop** to use the ``gloud`` service passing in the name of your bucket as the second parameter.
+You can configure **pushpop** to save your images to your [Google Cloud Storage](https://cloud.google.com/storage/) account by enabling the ``gloud`` service and telling it which bucket you want to use.
 
-	pushpop.service('gcloud', 'pushpop');
+	pushpop.config({
+		service: { name:'gcloud', bucket:'portfolio'}
+	});
 
 **pushpop** also uses environment variables to connect to your GCS account:
 
@@ -304,4 +340,4 @@ If you're running on [Heroku](https://www.heroku.com/) you'll need to convert th
 
 ##Contributing
 
-Questions, feedback, feature requests and ideas for improvement are all very much welcome. Please open an [issue](https://github.com/braitsch/pushpop.js/issues) to help facilitate a community discussion instead of sending me an email.
+Questions, feedback, feature requests and ideas for improvement are all very much welcome. Please open an [issue](https://github.com/braitsch/pushpop.js/issues) to help facilitate a community discussion instead of sending me an email. Thanks!
