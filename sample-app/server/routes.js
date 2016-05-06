@@ -19,7 +19,7 @@ module.exports = function(app) {
 	app.get('/', function (req, res)
 	{	
 		pushpop.getAll(function(media){
-			res.render('pushpop-modal', { media : media });
+			res.render('pushpop', { media : media });
 		});
 	});
 

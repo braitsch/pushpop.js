@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>pushpop.js sample app</title>
+    <meta charset="utf-8">
+    <meta name="robots" content="index,follow">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="description" content="pushpop.js is a lightweight media manager and thumbnail generator for Node.js">
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/pushpop.min.css">
+  </head>
+  <body>
+    <div class="btn btn-default" id="open" style="position:absolute;top:20px;right:20px">Open Upload Modal</div>
+    <div class="modal fade modal-push">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            <h4 class="modal-title">Upload Media <span class="instructions">| Click & Drag to Define Thumbnail</span></h4>
+          </div>
+          <div class="modal-body">
+            <div class="well">
+              <div class="media-preview">
+                <div class="thumb-generator"></div><img>
+                <iframe frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+              </div>
+            </div>
+            <div class="progress">
+              <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <div class="thumb-settings form-inline">
+              <div class="form-group">
+                <label class="ts">Thumb Style</label>
+                <select class="s1 form-control">
+                  <option>Normal</option>
+                  <option>Fixed Ratio</option>
+                  <option>Fixed Size</option>
+                </select>
+                <label>Color</label>
+                <select class="s2 form-control">
+                  <option>Black</option>
+                  <option>White</option>
+                  <option>Red</option>
+                  <option>Blue</option>
+                  <option>Yellow</option>
+                  <option>Gray</option>
+                  <option>Orange</option>
+                  <option>Green</option>
+                  <option>Purple</option>
+                </select>
+                <label>Width</label>
+                <input class="w form-control" disabled>
+                <label>Height</label>
+                <input class="h form-control" disabled>
+              </div>
+            </div>
+            <div class="media-settings">
+              <select class="media-dropdown form-control">
+                <option>Image</option>
+                <option>Video</option>
+              </select>
+            </div>
+            <div id="image">
+              <form method="post" enctype="multipart/form-data">
+                <input class="media-input form-control" disabled>
+                <input class="file-dialog" type="file" accept=".png, .jpg, .jpeg, .gif" name="file-dialog" style="display:none">
+                <button class="btn btn-success btn-select" type="button">Select</button>
+                <button class="btn btn-primary btn-upload" type="submit">Upload</button>
+              </form>
+            </div>
+            <div id="video">
+              <form method="post" enctype="multipart/form-data">
+                <input class="media-input form-control" placeholder="enter a youtube or vimeo url">
+                <button class="btn btn-success btn-save-video" type="submit">Save</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade modal-pop">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            <h4 class="modal-title">View / Delete</h4>
+          </div>
+          <div class="modal-body">
+            <div class="well">
+              <div class="media-preview"><img>
+                <iframe frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <form method="post" enctype="multipart/form-data">
+              <button class="btn btn-default" type="button" data-dismiss="modal" aria-label="Cancel">Cancel</button>
+              <button class="btn btn-danger" type="submit">Delete</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="/javascripts/jquery-2.1.4.min.js"></script>
+    <script src="/javascripts/bootstrap.min.js"></script>
+    <script src="/javascripts/jquery.form.min.js"></script>
+    <script src="/javascripts/pushpop.min.js"></script>
+    <script>
+      var pushpop = new PushPop();
+      $('#open').click(function(){
+      	pushpop.openPushModal();
+      });
+      $('.item').click(function(){
+      	pushpop.openPopModal(this);
+      });
+    </script>
+  </body>
+</html>
