@@ -2,7 +2,7 @@
 
 A lightweight media manager and thumbnail generator for [Node.js](https://nodejs.org)
 
-[![pushpop-modal](./readme.img/pushpop-modal.png?raw=true)](http://pushpop.herokuapp.com)
+[![pushpop-modal](./readme.img/pushpop-modal-push.png?raw=true)](http://pushpop.herokuapp.com)
 
 **pushpop.js** allows you to upload images and generate custom thumbnails for them using a marquee/crop tool similar to the one found in Photoshop.
 
@@ -129,9 +129,9 @@ To display the **push** window simply tell **pushpop** to show it whenever an ev
 	
 This will display the **push** window that will allow you to upload an image and define a thumbnail for it or save a video to the database.
 
-[![pushpop-modal](./readme.img/pushpop-modal.png?raw=true)](http://pushpop.herokuapp.com)
+[![pushpop-modal](./readme.img/pushpop-modal-push.png?raw=true)](http://pushpop.herokuapp.com)
 
-**pushpop** also provides a **pop** window that allows you to delete anything you've previous saved.
+**pushpop** also provides a **pop** window that allows you to delete anything you've previously saved.
 
 	var pushpop = new pushpop();
 	$('#add-new-item-button').click(function(){
