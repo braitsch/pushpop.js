@@ -1,7 +1,7 @@
 
 var mongo = function(log)
 {
-
+	const ObjectId = require('mongodb').ObjectID;
 	const MongoClient = require('mongodb').MongoClient;
 
 	let db = {
@@ -32,7 +32,7 @@ var mongo = function(log)
 	this.getMediaById = function(id, cback)
 	{
 	// get a single media object by its id //
-		media.findOne({ _id:new ObjectId(id) }, function(e, obj){ cback(obj); });
+		media.findOne({ _id:ObjectId(id) }, function(e, obj){ cback(obj); });
 	}
 
 	this.getMediaInProject = function(pName, cback)
@@ -49,17 +49,17 @@ var mongo = function(log)
 	this.save = function(nMedia, cback)
 	{
 		nMedia.date = new Date();
-		media.save(nMedia, { safe:true }, cback);
+		media.insertOne(nMedia, { safe:true }, cback);
 	}
 
 	this.delete = function(id, cback)
 	{
-		media.remove({ _id:new ObjectId(id) }, cback);
+		media.deleteOne({ _id:ObjectId(id) }, cback);
 	}
 
 	this.reset = function(cback)
 	{
-		media.remove({}, cback);
+		media.deleteMany({}, cback);
 	}
 }
 
@@ -67,6 +67,5 @@ module.exports = function(logFunc)
 {
 	return new mongo(logFunc);
 };
-
 
 

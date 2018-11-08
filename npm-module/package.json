@@ -1,7 +1,7 @@
 {
   "name": "pushpop",
-  "version": "1.0.0",
-  "description": "Image Crop Tool and Thumbnail Generator for Node.js",
+  "version": "1.0.1",
+  "description": "A lightweight image cropping tool and thumbnail generator for Node.js",
   "main": "index.js",
   "repository": {
     "type": "git",

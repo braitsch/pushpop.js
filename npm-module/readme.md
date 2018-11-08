@@ -1,6 +1,6 @@
 #pushpop
 
-A lightweight media manager and thumbnail generator for [Node](https://nodejs.org)
+A lightweight image cropping tool and thumbnail generator for [Node.js](https://nodejs.org)
 
 ##Configuration
 
@@ -36,4 +36,4 @@ To use it simply add it to your ``POST`` request handler like so:
 		}
 	});
 	
-[More documentation coming soon](https://github.com/braitsch/pushpop.js)
+[Source & Documentation](https://github.com/braitsch/pushpop.js)

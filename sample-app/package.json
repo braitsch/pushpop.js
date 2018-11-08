@@ -1,7 +1,7 @@
 {
   "name": "pushpop.js",
-  "version": "0.0.4",
-  "description": "A lightweight & scalable media management system for Node.js",
+  "version": "1.0.1",
+  "description": "A lightweight image cropping tool and thumbnail generator for Node.js",
   "author": "Stephen Braitsch <stephen@braitsch.io>",
   "license": "MIT",
   "repository": {
@@ -10,7 +10,8 @@
   },
   "dependencies": {
     "express": "^4.16.4",
-    "pug": "^2.0.3"
+    "pug": "^2.0.3",
+    "pushpop": "^1.0.0"
   },
   "engines": {
     "node": "10.4.0"

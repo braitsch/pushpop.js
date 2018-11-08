@@ -1,7 +1,7 @@
 
 var path = require('path');
-var pushpop = require('../../npm-module/index');
-//var pushpop = require('pushpop');
+//var pushpop = require('../../npm-module/index');
+var pushpop = require('pushpop');
 
 pushpop.config({
 // [required] set the global upload directory //
@@ -17,7 +17,7 @@ pushpop.config({
 module.exports = function(app) {
 
 	app.get('/', function (req, res)
-	{	
+	{
 		pushpop.getAll(function(media){
 			res.render('pushpop', { media : media });
 		});
@@ -52,14 +52,6 @@ module.exports = function(app) {
 			res.redirect('/');
 		});
 	});
-
-	// app.get('*', function(req, res){
-	// 	if (req.url != '/favicon.ico'){
-	// 		res.redirect('/');
-	// 	}	else{
-	// 		res.sendStatus(404);
-	// 	}
-	// });
 
 };
 
