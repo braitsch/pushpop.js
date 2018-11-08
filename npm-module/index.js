@@ -1,6 +1,6 @@
 
 /*
-    Copyright (C) 2016 Stephen Braitsch [http://braitsch.io]
+    Copyright (C) 2018 Stephen Braitsch [http://braitsch.io]
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
     in the Software without restriction, including without limitation the rights
@@ -19,8 +19,8 @@
 */
 
 var fs = require('fs');
-var gm = require('gm').subClass({ imageMagick: true });
 var path = require('path');
+var sharp = require('sharp');
 var exec = require('child_process').exec;
 var Busboy = require('busboy');
 var guid = function(){return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {var r = Math.random()*16|0,v=c=='x'?r:r&0x3|0x8;return v.toString(16);});}
@@ -169,13 +169,22 @@ exports.reset = function(cback)
 
 var saveThumb = function(tdata, req, cback)
 {
-	log('local :: generating thumbnail');
-	var img = gm(settings.pDirectory + '/' + req.media.image);
-	img.crop(tdata.crop.w, tdata.crop.h, tdata.crop.x, tdata.crop.y);
-// do not resize if we did not explicitly receive a width & height value //
-	if (tdata.width != 0 && tdata.height != 0) img.resize(tdata.width, tdata.height, '!');
-	img.noProfile();
-	img.write(settings.pDirectory + '/' + req.media.preview, cback);
+	log('local :: generating thumbnail', tdata);
+	let large = settings.pDirectory + '/' + req.media.image;
+	let small = settings.pDirectory + '/' + req.media.preview;
+	sharp(large)
+	.extract({
+		left: Math.round(tdata.crop.x),
+		top: Math.round(tdata.crop.y),
+		width: Math.round(tdata.crop.w),
+		height: Math.round(tdata.crop.h)
+	}).toBuffer().then(data => {
+		if (tdata.width == 0 && tdata.height == 0){
+			sharp(data).toFile(small).then(cback);
+		}	else{
+			sharp(data).resize(tdata.width, tdata.height).toFile(small).then(cback);
+		}
+	});
 }
 
 var addMedia = function(req, next)

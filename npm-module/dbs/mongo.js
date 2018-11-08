@@ -2,38 +2,27 @@
 var mongo = function(log)
 {
 
-	var MongoDB		= require('mongodb').Db;
-	var Server		= require('mongodb').Server;
-	var ObjectId 	= require('mongodb').ObjectID;
+	const MongoClient = require('mongodb').MongoClient;
 
-	/*
-		ESTABLISH DATABASE
-	*/
+	let db = {
+		name : process.env.DB_NAME || 'pushpop',
+		host : process.env.DB_HOST || 'localhost',
+		port : process.env.DB_PORT || 27017
+	}
+	if (process.env.NODE_ENV != 'live'){
+		db.url = 'mongodb://' + db.host + ':' + db.port;
+	}	else {
+		db.url = 'mongodb://' + process.env.DB_USER+':'+process.env.DB_PASS+'@'+db.host + ':' + db.port;
+	}
 
-	var dbName = process.env.DB_NAME || 'pushpop';
-	var dbHost = process.env.DB_HOST || 'localhost'
-	var dbPort = process.env.DB_PORT || 27017;
-
-	var db = new MongoDB(dbName, new Server(dbHost, dbPort, {auto_reconnect: true}), {w: 1});
-	var media = db.collection('media');
-
-	db.open(function(e, d){
-		if (e) {
-			log(e);
-		} else {
-			if (process.env.NODE_ENV == 'live') {
-				db.authenticate(process.env.DB_USER, process.env.DB_PASS, function(e, res) {
-					if (e) {
-						log('mongo :: error: not authenticated', e);
-					}
-					else {
-						log('mongo :: authenticated and connected to database :: "'+dbName+'"');
-					}
-				});
-			}	else{
-				log('mongo :: connected to database :: "'+dbName+'"');
-			}
-		}
+	let media = undefined;
+	MongoClient.connect(db.url, { useNewUrlParser: true }, function(e, client) {
+		if (e){
+			console.log(e);
+		}	else{
+			media = client.db(db.name).collection('media');
+			console.log('mongo :: connected to database :: "'+db.name+'"');
+		};
 	});
 
 	/*

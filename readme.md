@@ -1,4 +1,4 @@
-#[pushpop.js](http://pushpop.herokuapp.com)
+# [pushpop.js](http://pushpop.herokuapp.com)
 
 A lightweight media manager and thumbnail generator for [Node.js](https://nodejs.org)
 
@@ -10,7 +10,7 @@ Image thumbnails are defined within the modal window you see above and are then 
 
 Metadata about each image such as when it was created and any projects it may be associated with are automatically saved to a [Mongo](https://www.mongodb.org/) database. You can also save videos hosted on YouTube & Vimeo.
 
-##Getting Started
+## Getting Started
 	
 * [Installation](#installation)
 * [Configuration](#configuration)
@@ -21,7 +21,7 @@ Metadata about each image such as when it was created and any projects it may be
 * [Databases](#databases)
 * [Cloud Services](#cloud-services)
 
-##<a name="installation"></a>Installation
+## <a name="installation"></a>Installation
 
 The repository includes a **sample-app** that you can use as a starting point for your project.
 
@@ -63,9 +63,9 @@ To add **pushpop.js** to an existing project:
 	* /sample-app/server/pushpop.html
 	* /sample-app/server/pushpop.pug
 
-##<a name="configuration"></a>Configuration
+## <a name="configuration"></a>Configuration
 
-###Client
+### Client
 
 Instantiate a new instance of **pushpop.js** by adding the following line of JavaScript to your HTML after you've included the client library:
 
@@ -91,7 +91,7 @@ Additionally you can limit the size of uploads (as is done in the [live demo](ht
 
 By default no file size limit is imposed by the library.
 
-###Server
+### Server
 
 Configuration on the server is simply a matter of requiring the module and telling it where you want to save your uploaded images. You do this by passing your settings to the ``config`` method.
 
@@ -113,7 +113,7 @@ Configuration on the server is simply a matter of requiring the module and telli
 	
 **Tip:** See the [Cloud Services](#cloud-services) section for info on how to connect **pushpop** to your Google Cloud Storage account.
 
-##<a name="basic-usage"></a>Basic Usage
+## <a name="basic-usage"></a>Basic Usage
 
 The **pushpop.js** client library provides two modal windows that allow you to upload **(push)** content to your server as well as delete **(pop)** it off later if desired.
 
@@ -145,7 +145,7 @@ This will display the **push** window that will allow you to upload an image and
 
 The ``openPopModal`` function takes a reference to the DOM element that contains the media asset that you want to view. This DOM element should have a ``data-attribute`` named ``meta`` that describes the asset as discussed next.
 
-##<a name="metadata"></a>Metadata
+## <a name="metadata"></a>Metadata
 
 When an image or a video is saved metadata is generated that describes the asset:
 
@@ -206,7 +206,7 @@ To view (and delete) an asset simply bind a click handler to your class that con
 		pushpop.openPopModal(this);
 	});
 
-##<a name="projects"></a>Projects
+## <a name="projects"></a>Projects
 
 **pushpop** groups your media assets together into containers called ``projects``
 
@@ -240,7 +240,7 @@ However if you're using **pushpop** within a CMS you'll want to bind the current
 
 The array of metadata that is returned by ``setProject`` can be used to generate your HTML as explained above in the [Metadata](#metadata) section.
 
-##<a name="server-api"></a>Server API
+## <a name="server-api"></a>Server API
 
 **pushpop** on the server is middleware that intercepts incoming ``POST`` requests that contain image data and generates a thumbnail from information contained in the request. It then saves both the source image and thumbnail to a local or remote location of your choosing.
 
@@ -294,7 +294,7 @@ To delete all saved images & clear the database:
 	});
 
 
-##<a name="databases"></a>Databases
+## <a name="databases"></a>Databases
 
 **pushpop** currently only supports MongoDB however support for Redis is in the works.
 
@@ -309,7 +309,7 @@ If you need to authenticate be sure to also set:
 	process.env.DB_USER || 'braitsch' 
 	process.env.DB_PASS	|| '1234'
 
-##<a name="cloud-services"></a>Cloud Services
+## <a name="cloud-services"></a>Cloud Services
 
 You can configure **pushpop** to save your images to your [Google Cloud Storage](https://cloud.google.com/storage/) account by enabling the ``gloud`` service and telling it which bucket you want to use.
 
@@ -332,12 +332,12 @@ If you're running on [Heroku](https://www.heroku.com/) you'll need to convert th
 		"type": "service_account"
 	}'	
 
-##Coming Soon
+## Coming Soon
 
 * support for [Redis](http://redis.io/)
 * support for [Amazon S3](http://aws.amazon.com/s3/)
 * support for [Azure Storage](https://azure.microsoft.com/en-us/services/storage/)  
 
-##Contributing
+## Contributing
 
 Questions, feedback, feature requests and ideas for improvement are all very much welcome. Please open an [issue](https://github.com/braitsch/pushpop.js/issues) to help facilitate a community discussion instead of sending me an email. Thanks!

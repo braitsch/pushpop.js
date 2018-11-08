@@ -5,14 +5,14 @@ html
 		meta(charset="utf-8")
 		meta(name="robots" content="index,follow")
 		meta(name="viewport" content="width=device-width,initial-scale=1")
-		meta(name="description" content="pushpop.js is a lightweight media manager and thumbnail generator for Node.js")
+		meta(name="description" content="pushpop.js is an image crop tool and thumbnail generator for Node.js")
 		link(rel='stylesheet', href='/css/bootstrap.min.css')
 		link(rel='stylesheet', href='/css/pushpop.min.css')
 	body
 
 		//- simple gallery layout //
 
-		#open.btn.btn-default(style='position:absolute;top:20px;right:20px;') Open Upload Modal
+		#open.btn.btn-primary(style='position:absolute;top:20px;right:20px;') Select Image
 
 		- for (var i=0; i<media.length; i++) {
 			- var data = media[i];

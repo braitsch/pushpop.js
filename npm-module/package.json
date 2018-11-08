@@ -1,7 +1,7 @@
 {
   "name": "pushpop",
-  "version": "0.0.4",
-  "description": "lightweight media manager and thumbnail generator for Node.js",
+  "version": "1.0.0",
+  "description": "Image Crop Tool and Thumbnail Generator for Node.js",
   "main": "index.js",
   "repository": {
     "type": "git",
@@ -15,12 +15,12 @@
   "bugs": {
     "url": "https://github.com/braitsch/pushpop.js/issues"
   },
-  "license" : "MIT",
+  "license": "MIT",
   "homepage": "https://github.com/braitsch/pushpop.js#readme",
   "dependencies": {
-    "mongodb": "^2.1.7",
-    "gcloud": "^0.28.0",
-    "gm": "^1.21.1",
-    "busboy": "^0.2.12"
+    "@google-cloud/storage": "^2.3.0",
+    "busboy": "^0.2.14",
+    "mongodb": "^3.1.9",
+    "sharp": "^0.21.0"
   }
 }

@@ -1,7 +1,7 @@
 
 var path = require('path');
-//var pushpop = require('../../npm-module/index');
-var pushpop = require('pushpop');
+var pushpop = require('../../npm-module/index');
+//var pushpop = require('pushpop');
 
 pushpop.config({
 // [required] set the global upload directory //
@@ -53,13 +53,13 @@ module.exports = function(app) {
 		});
 	});
 
-	app.get('*', function(req, res){
-		if (req.url != '/favicon.ico'){
-			res.redirect('/');
-		}	else{
-			res.sendStatus(404);
-		}
-	});
+	// app.get('*', function(req, res){
+	// 	if (req.url != '/favicon.ico'){
+	// 		res.redirect('/');
+	// 	}	else{
+	// 		res.sendStatus(404);
+	// 	}
+	// });
 
 };
 

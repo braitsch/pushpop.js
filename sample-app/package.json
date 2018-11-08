@@ -3,26 +3,26 @@
   "version": "0.0.4",
   "description": "A lightweight & scalable media management system for Node.js",
   "author": "Stephen Braitsch <stephen@braitsch.io>",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git@github.com:braitsch/pushpop.js.git"
   },
   "dependencies": {
-    "express": "^4.13.4",
-    "pug": "^0.1.0",
-    "pushpop": "0.0.4"
+    "express": "^4.16.4",
+    "pug": "^2.0.3"
   },
   "engines": {
-    "node": "4.2.1"
+    "node": "10.4.0"
   },
   "scripts": {
     "start": "node app.js"
   },
   "devDependencies": {
-    "gulp": "^3.9.1",
+    "gulp": "^4.0.0",
     "gulp-concat": "^2.6.0",
     "gulp-minify-css": "^1.2.4",
-    "gulp-uglify": "^1.5.3",
-    "gulp-rename": "^1.2.2"
+    "gulp-rename": "^1.2.2",
+    "gulp-uglify": "^1.5.3"
   }
 }
